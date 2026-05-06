@@ -38,11 +38,15 @@ async def run_parallel_tasks(count: int):
         df = pd.DataFrame(completed)
         avg_savings = df["total_tokens_saved"].mean()
         
+        # Estimate cost savings (assuming $10/1M tokens for GPT-4o)
+        cost_saved = (df["total_tokens_saved"].sum() / 1_000_000) * 10.0
+        
         print("\n\n--- BENCHMARK RESULTS ---")
         print(f"Total Tasks: {count}")
         print(f"Total Time: {total_time:.2f}s")
         print(f"Throughput: {count/total_time:.2f} tasks/sec")
         print(f"Avg Tokens Saved per Task: {avg_savings:.0f}")
+        print(f"Total Cost Saved: ${cost_saved:.4f}")
         
         # Output comparison table
         summary = {
