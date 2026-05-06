@@ -30,18 +30,18 @@ class PrimaryAgent:
             )
         
         self.orchestrator_prompt = ChatPromptTemplate.from_messages([
-            ("system", """You are the Primary Orchestrator for Terminus-Lite. 
-Solve the user's task using the MINIMUM number of commands.
+            ("system", """You are the Primary Orchestrator. 
+Your goal is to solve the task with the LEAST number of steps possible.
 
 RULES:
-1. If the user's goal is met (e.g., they said 'hi' and you echoed back), you MUST stop.
-2. If finished, output ONLY: TASK_COMPLETE: <final summary>
-3. If not finished, output ONLY: RUN: <command>
-4. NEVER repeat a command that already succeeded.
-5. NO conversation.
+1. If the LATEST_EXECUTION_SUMMARY says 'Status: Success' and the intent is met, YOU MUST STOP.
+2. To stop, output ONLY: TASK_COMPLETE: <final summary>
+3. To continue, output ONLY: RUN: <command>
+4. NEVER repeat a command.
+5. NO conversation. NO explanations.
 
 Current Situation:
-- If the last SLM summary shows the expected output, you are DONE.
+- If the user said 'hi' and you already ran 'echo', you are DONE.
 """),
             ("user", "TASK: {task}\n\nPREVIOUS_ACTIONS: {history}\n\nLATEST_EXECUTION_SUMMARY: {summary}")
         ])

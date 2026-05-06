@@ -30,16 +30,16 @@ class SLMSubAgent:
             )
         
         self.summary_prompt = ChatPromptTemplate.from_messages([
-            ("system", """You are a specialized Terminal Log Analyzer (SLM Sub-Agent). 
-Your goal is to parse verbose terminal logs and extract ONLY the most relevant information for a Primary Agent.
-Focus on:
-1. Compilation errors or runtime crashes.
-2. Failed test cases and their specific error messages.
-3. Key performance metrics (if any).
-4. Whether the command succeeded or failed.
+            ("system", """You are a Terminal Log Analyzer. 
+Distill logs into a single high-signal line.
 
-Be extremely concise. If there are no errors, just say 'Success: [Brief description of what happened]'.
-If there are errors, provide the exact lines of code or stack traces that caused the failure."""),
+FORMAT:
+Status: [Success|Error] | Result: <1 sentence description>
+
+Example:
+Input: Hello World
+Output: Status: Success | Result: Printed "Hello World" to console.
+"""),
             ("user", "COMMAND: {command}\n\nSTDOUT:\n{stdout}\n\nSTDERR:\n{stderr}\n\nEXIT_CODE: {exit_code}")
         ])
 
