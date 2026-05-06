@@ -9,7 +9,6 @@ function App() {
   const [logs, setLogs] = useState([]);
   const [metrics, setMetrics] = useState({ system_load: 0, queue_length: 0 });
   const [isDemo, setIsDemo] = useState(false);
-  const [activeTab, setActiveTab] = useState('terminal'); // 'terminal' or 'activity'
   const terminalRef = useRef(null);
 
   const pollTask = async (taskId) => {
@@ -157,15 +156,6 @@ function App() {
           </svg>
           TERMINUS-LITE // DISTRIBUTED_ROUTER
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', fontSize: '0.7rem', fontWeight: 600 }}>
-          {isDemo && (
-            <div style={{ background: 'var(--safety-orange)', color: 'var(--bg-black)', padding: '2px 8px', borderRadius: '2px', fontSize: '0.6rem', fontWeight: 800 }}>
-              STATIC_DEMO_MODE
-            </div>
-          )}
-          <span style={{ color: 'var(--phosphor-green)' }}>[ SLM_LINK: {isDemo ? 'SIMULATED' : 'ACTIVE'} ]</span>
-          <span style={{ color: 'var(--data-blue)' }}>[ PRIMARY_LINK: {isDemo ? 'OFFLINE' : 'ONLINE'} ]</span>
-        </div>
       </header>
 
       <section className="hud-metrics">
@@ -207,7 +197,7 @@ function App() {
       </section>
 
       <div className="main-layout">
-        <div className={`summary-sidebar ${activeTab === 'activity' ? 'active' : 'mobile-hidden'}`}>
+        <div className="summary-sidebar">
           <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Activity size={12} /> Activity Stream
           </div>
@@ -252,40 +242,7 @@ function App() {
           )}
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column' }} className={activeTab === 'terminal' ? 'active' : 'mobile-hidden'}>
-          <div className="command-input-row">
-            <input 
-              type="text" 
-              placeholder="ENTER_COMMAND_DESCRIPTION..." 
-              className="terminal-input"
-              value={task}
-              onChange={(e) => setTask(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleExecute()}
-            />
-            <button className="run-btn" onClick={handleExecute} disabled={loading}>
-              {loading ? 'BUSY' : 'EXEC'}
-            </button>
-          </div>
-
-          <div className="suggestion-chips-container">
-            <span className="suggestion-label">SUGGESTED_TASKS:</span>
-            {[
-              "Read and summarize CONTEXT_SAVER.md",
-              "List every file in 'mock_target' recursively",
-              "Search for 'TODO' markers in 'mock_target'",
-              "Benchmark efficiency on 'mock_target'"
-            ].map((suggestion, i) => (
-              <button 
-                key={i} 
-                className="suggestion-chip"
-                onClick={() => setTask(suggestion)}
-                disabled={loading}
-              >
-                {suggestion}
-              </button>
-            ))}
-          </div>
-
+        <div className="terminal-column">
           <div className="terminal-deck">
             <div className="terminal-header">
               <span>TERMINAL_OUTPUT</span>
@@ -303,6 +260,41 @@ function App() {
           </div>
         </div>
       </div>
+
+      <footer className="footer-controls">
+        <div className="command-input-row">
+          <input 
+            type="text" 
+            placeholder="ENTER_COMMAND_DESCRIPTION..." 
+            className="terminal-input"
+            value={task}
+            onChange={(e) => setTask(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleExecute()}
+          />
+          <button className="run-btn" onClick={handleExecute} disabled={loading}>
+            {loading ? 'BUSY' : 'EXEC'}
+          </button>
+        </div>
+
+        <div className="suggestion-chips-container">
+          <span className="suggestion-label">SUGGESTED_TASKS:</span>
+          {[
+            "Read and summarize CONTEXT_SAVER.md",
+            "List every file in 'mock_target' recursively",
+            "Search for 'TODO' markers in 'mock_target'",
+            "Benchmark efficiency on 'mock_target'"
+          ].map((suggestion, i) => (
+            <button 
+              key={i} 
+              className="suggestion-chip"
+              onClick={() => setTask(suggestion)}
+              disabled={loading}
+            >
+              {suggestion}
+            </button>
+          ))}
+        </div>
+      </footer>
       {isDemo && (
         <div className="demo-banner">
           <div className="demo-banner-content">
@@ -311,21 +303,6 @@ function App() {
           </div>
         </div>
       )}
-
-      <nav className="mobile-nav-bar">
-        <div className={`nav-item ${activeTab === 'terminal' ? 'active' : ''}`} onClick={() => setActiveTab('terminal')}>
-          <div className="nav-icon-container">
-            <Terminal size={20} />
-          </div>
-          <span>Terminal</span>
-        </div>
-        <div className={`nav-item ${activeTab === 'activity' ? 'active' : ''}`} onClick={() => setActiveTab('activity')}>
-          <div className="nav-icon-container">
-            <Activity size={20} />
-          </div>
-          <span>Activity</span>
-        </div>
-      </nav>
     </div>
   );
 }
