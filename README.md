@@ -22,11 +22,19 @@ Terminus-Lite is decoupled into specialized microservices to ensure independent 
 
 ## 🚀 Deployment
 
-### Local Development (Docker Compose)
-The entire stack can be launched with a single command:
+### Local Development (Docker)
+The entire stack can be launched with:
 ```powershell
-docker-compose up --build
+docker compose up --build
 ```
+*(Note: Use `docker compose` without the hyphen on modern Docker Desktop).*
+
+### Local Development (No Docker)
+If you prefer to run natively, use the automated launch script:
+```powershell
+.\start_distributed.ps1
+```
+*(Requires Redis to be running locally on port 6379).*
 
 ### Manual Service Start
 If running without Docker, ensure Redis is active:

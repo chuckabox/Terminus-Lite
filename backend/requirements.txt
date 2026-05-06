@@ -4,7 +4,10 @@ pydantic
 langchain
 langchain-openai
 langchain-community
-python-dotenv
 langchain-ollama
+python-dotenv
 httpx
 psutil
+redis
+pandas
+tabulate
