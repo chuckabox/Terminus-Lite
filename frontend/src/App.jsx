@@ -71,7 +71,10 @@ function App() {
   return (
     <div className="app-container">
       <header>
-        <div className="logo">TERMINUS-LITE</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <Zap size={24} color="var(--accent-primary)" fill="var(--accent-primary)" style={{ filter: 'drop-shadow(0 0 8px var(--accent-primary))' }} />
+          <div className="logo">TERMINUS-LITE</div>
+        </div>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           <div className="badge badge-slm">SLM Active</div>
           <div className="badge badge-primary">Primary Linked</div>
