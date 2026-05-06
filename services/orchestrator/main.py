@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, BackgroundTasks
 from shared.models.task import Task, TaskRequest, TaskResponse, TaskStatus
 from shared.utils.logging import setup_logger
+from fastapi.middleware.cors import CORSMiddleware
 import redis
 import json
 import os
@@ -9,6 +10,16 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = FastAPI(title="Terminus-Lite Orchestrator")
+
+# Enable CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], # For production, specify the frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 logger = setup_logger("orchestrator")
 
 # Redis Connection
