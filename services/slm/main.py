@@ -29,7 +29,7 @@ class SummaryRequest(BaseModel):
 
 @app.post("/summarize")
 async def summarize(request: SummaryRequest):
-    logger.info("Summarizing logs", extra={"service": "slm_service"})
+    logger.info("Summarizing", extra={"service": "slm"}), #"Summarizing logs", extra={"service": "slm_service"})
     try:
         chain = summary_prompt | llm
         response = await chain.ainvoke({"raw_stdout": request.raw_stdout, "stderr": request.stderr})
