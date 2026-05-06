@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Zap } from 'lucide-react';
+import { Zap, Terminal, Activity, Search, Shield } from 'lucide-react';
 import './App.css';
 
 function App() {
@@ -9,6 +9,7 @@ function App() {
   const [logs, setLogs] = useState([]);
   const [metrics, setMetrics] = useState({ system_load: 0, queue_length: 0 });
   const [isDemo, setIsDemo] = useState(false);
+  const [activeTab, setActiveTab] = useState('terminal'); // 'terminal' or 'activity'
   const terminalRef = useRef(null);
 
   const pollTask = async (taskId) => {
@@ -206,9 +207,9 @@ function App() {
       </section>
 
       <div className="main-layout">
-        <div className="summary-sidebar">
-          <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-            Activity Stream
+        <div className={`summary-sidebar ${activeTab === 'activity' ? 'active' : 'mobile-hidden'}`}>
+          <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Activity size={12} /> Activity Stream
           </div>
 
           {isDemo && (
@@ -251,7 +252,7 @@ function App() {
           )}
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ display: 'flex', flexDirection: 'column' }} className={activeTab === 'terminal' ? 'active' : 'mobile-hidden'}>
           <div className="command-input-row">
             <input 
               type="text" 
@@ -266,8 +267,8 @@ function App() {
             </button>
           </div>
 
-          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
-            <span style={{ fontSize: '0.6rem', color: 'var(--text-dim)', alignSelf: 'center', marginRight: '0.5rem' }}>SUGGESTED_TASKS:</span>
+          <div className="suggestion-chips-container">
+            <span className="suggestion-label">SUGGESTED_TASKS:</span>
             {[
               "Read and summarize CONTEXT_SAVER.md",
               "List every file in 'mock_target' recursively",
@@ -310,6 +311,21 @@ function App() {
           </div>
         </div>
       )}
+
+      <nav className="mobile-nav-bar">
+        <div className={`nav-item ${activeTab === 'terminal' ? 'active' : ''}`} onClick={() => setActiveTab('terminal')}>
+          <div className="nav-icon-container">
+            <Terminal size={20} />
+          </div>
+          <span>Terminal</span>
+        </div>
+        <div className={`nav-item ${activeTab === 'activity' ? 'active' : ''}`} onClick={() => setActiveTab('activity')}>
+          <div className="nav-icon-container">
+            <Activity size={20} />
+          </div>
+          <span>Activity</span>
+        </div>
+      </nav>
     </div>
   );
 }

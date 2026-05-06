@@ -1,23 +1,42 @@
 @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600;700&display=swap');
 
 :root {
-  --bg-black: #020202;
-  --surface-low: #080808; /* Slightly deeper black */
-  --surface-mid: #121212;
-  --surface-high: #1a1a1a;
+  /* Material Design 3 - Dark Theme Tokens (Adapted for Phosphor aesthetic) */
+  --md-sys-color-primary: #00ff41;
+  --md-sys-color-on-primary: #00390a;
+  --md-sys-color-primary-container: #005314;
+  --md-sys-color-on-primary-container: #8cff84;
   
-  --phosphor-green: #00ff41;
-  --safety-orange: #ff4500;
-  --data-blue: #00a3ff;
+  --md-sys-color-secondary: #00a3ff;
+  --md-sys-color-on-secondary: #00344d;
+  --md-sys-color-secondary-container: #004c6e;
+  --md-sys-color-on-secondary-container: #c1e8ff;
   
+  --md-sys-color-error: #ff4500;
+  --md-sys-color-on-error: #690005;
+  
+  --md-sys-color-background: #020202;
+  --md-sys-color-on-background: #e1e3de;
+  
+  --md-sys-color-surface: #080808;
+  --md-sys-color-on-surface: #e1e3de;
+  --md-sys-color-surface-variant: #1a1a1a;
+  --md-sys-color-on-surface-variant: #a1a1aa;
+  
+  --md-sys-color-outline: #27272a;
+  
+  /* Legacy/Support Variables */
+  --bg-black: var(--md-sys-color-background);
+  --phosphor-green: var(--md-sys-color-primary);
+  --safety-orange: var(--md-sys-color-error);
+  --data-blue: var(--md-sys-color-secondary);
   --text-dim: #555;
-  --text-mid: #a1a1aa;
-  --text-bright: #e4e4e7;
-  
-  --border-dim: #1a1a1a;
-  --border-bright: #27272a;
+  --text-mid: var(--md-sys-color-on-surface-variant);
+  --text-bright: var(--md-sys-color-on-surface);
+  --border-dim: var(--md-sys-color-outline);
   
   --font-mono: 'IBM Plex Mono', monospace;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
 body {
@@ -123,8 +142,8 @@ header {
 .main-layout {
   display: grid;
   grid-template-columns: 400px 1fr;
-  gap: 1rem;
-  padding: 1rem 0;
+  gap: 1.5rem;
+  padding: 1.5rem 0;
   overflow: hidden;
 }
 
@@ -282,64 +301,186 @@ header {
   box-shadow: 0 0 8px var(--phosphor-green);
 }
 
+.mobile-nav-bar {
+  display: none;
+}
+
+.suggestion-chips-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.suggestion-label {
+  font-size: 0.6rem;
+  color: var(--text-dim);
+  align-self: center;
+  margin-right: 0.5rem;
+}
+
 /* Material Design 3 Adaptive Layout */
-@media (max-width: 768px) {
+@media (max-width: 840px) {
+  .app-container {
+    grid-template-rows: auto auto 1fr;
+    padding: 0;
+    overflow-y: auto;
+    height: auto;
+    min-height: 100vh;
+  }
+
   header {
     flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-    padding: 1.25rem 1rem;
+    align-items: center;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--md-sys-color-outline);
+    text-align: center;
   }
 
-  .metrics-section {
-    overflow-x: auto;
-    justify-content: flex-start;
+  header > div {
+    justify-content: center;
+  }
+
+  .hud-metrics {
+    grid-template-columns: repeat(2, 1fr);
     padding: 1rem;
-    gap: 1.5rem;
-    /* Hide scrollbar but keep functionality */
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  .metrics-section::-webkit-scrollbar {
-    display: none;
-  }
-
-  .metric-item {
-    min-width: 100px;
-    flex-shrink: 0;
+    background: var(--md-sys-color-surface);
+    border-bottom: 1px solid var(--md-sys-color-outline);
+    gap: 1rem;
   }
 
   .main-layout {
     display: flex;
     flex-direction: column;
-    padding: 0 1rem 5rem 1rem; /* Space for demo banner */
-    gap: 1.5rem;
+    padding: 1rem;
+    gap: 2rem;
   }
 
-  .command-input-row {
-    gap: 0.5rem;
-  }
-
-  .terminal-input, .run-btn {
-    height: 48px; /* M3 touch target minimum */
-  }
-
-  .suggestion-chip {
-    padding: 8px 16px; /* Larger tap target */
-    font-size: 0.7rem;
+  .mobile-hidden {
+    display: none !important;
   }
 
   .summary-sidebar {
-    width: 100%;
-    border-left: none;
-    border-top: 1px solid var(--border-dim);
-    padding-left: 0;
-    padding-top: 1.5rem;
+    order: 2;
+    overflow: visible;
+  }
+
+  .summary-sidebar.active {
+    display: flex !important;
   }
 
   .terminal-deck {
-    height: 400px; /* Locked height for mobile scrolling */
+    order: 1;
+    height: 450px;
+    border-radius: 12px;
+    border: 1px solid var(--md-sys-color-outline);
+  }
+
+  .command-input-row {
+    position: sticky;
+    bottom: calc(80px + 1rem); /* Above bottom nav (80px) + margin */
+    z-index: 100;
+    background: var(--md-sys-color-surface);
+    border-radius: 28px; /* Fully rounded M3 search style */
+    margin: 1rem 0;
+    padding: 4px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    border: 1px solid var(--md-sys-color-primary);
+  }
+
+  .terminal-input {
+    padding: 0.75rem 1.25rem;
+    border-radius: 24px;
+  }
+
+  .run-btn {
+    border-radius: 24px;
+    padding: 0 1.5rem;
+    height: 48px;
+  }
+
+  .suggestion-chips-container {
+    padding: 0.5rem 0;
+    overflow-x: auto;
+    display: flex;
+    white-space: nowrap;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .suggestion-chips-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  .suggestion-label {
+    display: none; /* Hide label on mobile to save space */
+  }
+
+  .suggestion-chip {
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    flex-shrink: 0;
+  }
+
+  .summary-block {
+    border-radius: 16px; /* M3 Card style */
+    border: 1px solid var(--md-sys-color-outline);
+    background: var(--md-sys-color-surface-variant);
+  }
+
+  .summary-block::before {
+    display: none;
+  }
+
+  .mobile-nav-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80px;
+    background: rgba(8, 8, 8, 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-top: 1px solid var(--md-sys-color-outline);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--md-sys-color-on-surface-variant);
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+
+  .nav-item.active {
+    color: var(--md-sys-color-primary);
+  }
+
+  .nav-icon-container {
+    width: 64px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    transition: background-color 0.2s;
+  }
+
+  .nav-item.active .nav-icon-container {
+    background-color: var(--md-sys-color-primary-container);
+    color: var(--md-sys-color-on-primary-container);
   }
 }
 
