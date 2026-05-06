@@ -1,69 +1,44 @@
-# Terminus-Lite: Distributed SLM Sub-Agent Router
+# Terminus-Lite
 
-**Terminus-Lite** is a production-grade, distributed execution offloading system. Built with Google-scale engineering fundamentals, it demonstrates how to leverage Small Language Models (SLMs) in a resilient, scalable, and observable backend architecture.
+Terminus-Lite is a distributed sub-agent router designed to solve context-window bloat in agentic workflows. It offloads verbose terminal logs to localized Small Language Models (SLMs), passing only concise signals back to the primary orchestrator.
 
-## 🏗 System Architecture
+## Quick Start
 
-Terminus-Lite is decoupled into specialized microservices to ensure independent scalability and fault tolerance:
+The stack runs on Docker or natively via PowerShell.
 
-- **Orchestrator API**: FastAPI-based gateway that manages task lifecycle and state using Redis.
-- **Worker Cluster**: Asynchronous execution nodes that handle terminal operations and agent logic.
-- **SLM Inference Service**: High-throughput log summarization service with built-in retries and fallbacks.
-- **Message Queue (Redis)**: Decouples request ingestion from task execution, enabling horizontal scaling of workers.
-
-### ✨ Features
-- **Context Isolation**: Sub-agent intercepts verbose logs, keeping the primary agent focused.
-- **Microservices Architecture**: Distributed Orchestrator, Worker, and Inference services.
-- **Ollama Integration**: Run 100% locally with Llama-3 and Qwen-2.5.
-- **Real-time Monitoring**: Premium React dashboard with token savings and latency tracking.
-- **Fault Tolerance**: Automatic fallbacks and retries for inference failures.
-
-### Architecture Diagram
-```text
-[User] -> [Orchestrator API] -> [Redis Queue] -> [Worker Cluster]
-                                                      |
-                                          [SLM Inference Service]
-                                                      |
-                                              [Ollama Engine]
-```
-
-## 🚀 Deployment
-
-### Local Development (Docker)
-The entire stack can be launched with:
-```powershell
+**Option 1: Docker (Recommended)**
+```bash
 docker compose up --build
 ```
-*(Note: Use `docker compose` without the hyphen on modern Docker Desktop).*
 
-### Local Development (No Docker)
-If you prefer to run natively, use the automated launch script:
+**Option 2: Native PowerShell**
+Requires a local Redis instance on port 6379.
 ```powershell
 .\start_distributed.ps1
 ```
-*(Requires Redis to be running locally on port 6379).*
 
-### Manual Service Start
-If running without Docker, ensure Redis is active:
-1. `python services/orchestrator/main.py` (Port 8001)
-2. `python services/slm/main.py` (Port 8002)
-3. `python services/worker/main.py`
+Access the dashboard at `http://localhost:5173`.
 
-## 📊 Observability & Metrics
+## Architecture
 
-Terminus-Lite implements structured JSON logging for all services and tracks critical KPIs:
-- **Token Efficiency**: Measures context saved by SLM offloading.
-- **Latency (p95)**: End-to-end task execution time.
-- **Reliability**: Exponential backoff on SLM failures with primary-model fallback.
+Terminus-Lite uses a distributed worker model to isolate high-latency execution and inference tasks from the API gateway.
 
-### Running Benchmarks
-Evaluate system performance and scalability:
+- **Orchestrator**: A FastAPI gateway managing task lifecycles and Redis state.
+- **Worker Cluster**: Stateless nodes processing agent logic and terminal execution.
+- **SLM Service**: A dedicated inference endpoint for log summarization (Ollama/Qwen).
+- **Redis Queue**: The backbone for task routing and horizontal worker scaling.
+
+## Reliability & Resiliency
+
+The system is built for production durability:
+- **Resilient Inference**: SLM failures trigger exponential backoff before falling back to smart truncation.
+- **Stateless Workers**: All task state is persisted in Redis; workers can be horizontally scaled or replaced without data loss.
+- **Context Isolation**: By distilling massive terminal outputs into structured summaries, the primary agent maintains a clean, high-performance context window.
+
+## Performance & Benchmarking
+
+Measure throughput and token efficiency locally:
 ```powershell
 python scripts/benchmark.py
 ```
-
-## 🛠 Engineering Fundamentals
-- **Distributed State**: Tasks are persisted in Redis, allowing workers to be stateless and replaceable.
-- **Resiliency**: Circuit breakers and fallbacks ensure the system remains operational even if the SLM service degrades.
-- **Schema Safety**: Shared Pydantic models ensure consistency across the distributed boundary.
-- **Scalability**: Designed to handle 100+ concurrent jobs by scaling the Worker Cluster.
+The suite provides end-to-end latency metrics, throughput analysis, and estimated cost savings achieved through SLM offloading.
