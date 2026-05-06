@@ -1,46 +1,49 @@
 # Terminus-Lite
 
-Terminus-Lite is a distributed sub-agent router that prevents context-window bloat in AI workflows. It offloads verbose terminal logs to localized Small Language Models (SLMs), passing only concise signals back to the primary orchestrator.
+Terminus-Lite is a distributed sub-agent router designed to solve **context-window bloat**. It sits between your AI "Brain" and the terminal, ensuring the AI only sees meaningful results instead of thousands of lines of raw logs.
 
-## Core Concept: Log Distillation
+## Why use this?
 
-AI agents often lose context when overwhelmed by thousands of lines of terminal output. Terminus-Lite solves this using a split-brain architecture:
+Standard AI agents often "choke" on large terminal outputs. If an agent runs `npm install` or `grep`, it might receive 5,000 lines of text.
 
-1. **Primary Agent (Llama 3)**: Manages high-level reasoning and task logic.
-2. **SLM Service (Qwen 2.5)**: Distills raw logs into 1-2 sentence summaries.
-3. **Worker**: Executes system commands and manages the local agent loop.
+- **Without Terminus**: Those 5,000 lines go directly into the AI's memory. The AI becomes slow, expensive, and forgets your original goal.
+- **With Terminus**: A localized Small Language Model (SLM) "reads" those 5,000 lines and tells the Brain: *"Successfully installed 42 packages."* 
 
-By distilling logs, the Primary Agent maintains a clean context window, reducing token usage by up to 90%.
+**The result:** Your primary agent stays focused and can solve much longer, more complex tasks.
+
+## How it Works: Split-Brain Architecture
+
+Terminus-Lite divides the workload across three specialized components:
+
+1.  **The Brain (Primary Agent - Llama 3)**: Handles high-level logic and decisions.
+2.  **The Filter (SLM Service - Qwen 2.5)**: Distills raw logs into 1-2 sentence summaries.
+3.  **The Hands (Worker)**: Executes system commands inside a secure Docker environment.
 
 ## Getting Started
 
-The entire stack is self-contained via Docker.
-
+### 1. Launch the Stack
+The stack includes a local **Ollama** instance, so all AI processing happens on your own hardware.
 ```bash
 docker compose up -d
 ```
 
-### Usage
-1. Open the dashboard at [http://localhost:5173](http://localhost:5173).
-2. Input a terminal-heavy task (e.g., "Find all python files in the project").
-3. Monitor the distillation process as raw output is converted into structured summaries.
+### 2. Run a Task
+Open [http://localhost:5173](http://localhost:5173) and enter a task that would usually generate a lot of "noise," such as:
+*   `List every file in the project recursively.`
+*   `Search for the word 'python' in every file.`
 
-## Architecture
+### 3. Observe Distillation
+The dashboard will show you the "Token Savings." You'll see the raw output size (e.g., 15KB) vs. what was actually sent to the Brain (e.g., 100 bytes).
 
-- **Orchestrator**: FastAPI gateway managing the task lifecycle and Redis state.
-- **Worker Cluster**: Stateless nodes processing agent logic and execution.
-- **SLM Service**: Dedicated inference endpoint for log summarization.
-- **Redis Queue**: Backbone for task routing and horizontal scaling.
-- **Ollama**: Local inference engine for internal model orchestration.
+## Infrastructure
+
+- **Local Inference**: Powered by Ollama. No API keys or external costs required.
+- **Isolation**: Commands run inside the Docker worker, protecting your host system.
+- **Persistence**: Task state and summaries are stored in Redis for real-time monitoring.
 
 ## Benchmarking
 
-Measure throughput and token efficiency:
-
+To measure how much context you're saving on your specific machine:
 ```bash
 python scripts/benchmark.py
 ```
-
-## Security
-
-This system executes commands directly within the container environment. Use caution when running tasks that modify the filesystem.
