@@ -19,6 +19,15 @@ Terminus-Lite divides the workload across three specialized components:
 2.  **The Filter (SLM Service - Qwen 2.5)**: Distills raw logs into 1-2 sentence summaries.
 3.  **The Hands (Worker)**: Executes system commands inside a secure Docker environment.
 
+## Tech Stack
+
+- **AI Orchestration**: [LangChain](https://www.langchain.com/) & [Ollama](https://ollama.com/)
+- **Core Models**: Llama 3 (8B) & Qwen 2.5 (3B)
+- **Backend**: Python 3.12, [FastAPI](https://fastapi.tiangolo.com/)
+- **State & Queue**: [Redis](https://redis.io/)
+- **Frontend**: React 19, Vite, Tailwind CSS, Framer Motion
+- **Infrastructure**: Docker & Docker Compose
+
 ## Getting Started
 
 ### 1. Launch the Stack
