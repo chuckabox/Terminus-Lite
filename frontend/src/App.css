@@ -118,16 +118,16 @@ header {
   opacity: 0.9;
 }
 
-.badge {
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
+.badge-slm { 
+  background-color: rgba(112, 0, 255, 0.2); 
+  color: #c084fc; 
+  box-shadow: 0 0 10px rgba(112, 0, 255, 0.3);
 }
-
-.badge-slm { background-color: rgba(112, 0, 255, 0.2); color: #c084fc; }
-.badge-primary { background-color: rgba(0, 242, 255, 0.2); color: #22d3ee; }
+.badge-primary { 
+  background-color: rgba(0, 242, 255, 0.2); 
+  color: #22d3ee; 
+  box-shadow: 0 0 10px rgba(0, 242, 255, 0.3);
+}
 
 .terminal::-webkit-scrollbar {
   width: 6px;
