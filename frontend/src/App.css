@@ -128,3 +128,20 @@ header {
 
 .badge-slm { background-color: rgba(112, 0, 255, 0.2); color: #c084fc; }
 .badge-primary { background-color: rgba(0, 242, 255, 0.2); color: #22d3ee; }
+
+.terminal::-webkit-scrollbar {
+  width: 6px;
+}
+
+.terminal::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.terminal::-webkit-scrollbar-thumb {
+  background: #27272a;
+  border-radius: 10px;
+}
+
+.terminal::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary);
+}
