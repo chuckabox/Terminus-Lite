@@ -33,7 +33,7 @@ Terminus-Lite divides the workload across three specialized components:
 ### 1. Launch the Stack
 The stack includes a local **Ollama** instance, so all AI processing happens on your own hardware.
 ```bash
-docker compose up -d
+docker-compose up --build -d
 ```
 
 ### 2. Run a Task
