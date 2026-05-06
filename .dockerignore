@@ -1,10 +1,4 @@
-.git
 node_modules
-dist
+.git
 __pycache__
-*.pyc
-.env
-.venv
-venv
-frontend/node_modules
-frontend/dist
+dist
