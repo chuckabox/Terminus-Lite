@@ -1,6 +1,7 @@
 from typing import List, Dict
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
+import os
 from dotenv import load_dotenv
 
 load_dotenv()
