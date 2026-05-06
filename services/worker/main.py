@@ -3,6 +3,7 @@ import asyncio
 import redis
 import json
 import os
+from pathlib import Path
 import httpx
 from shared.models.task import Task, TaskStatus, ExecutionStep
 from shared.utils.logging import setup_logger
