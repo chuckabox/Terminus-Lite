@@ -11,6 +11,13 @@ Terminus-Lite is decoupled into specialized microservices to ensure independent 
 - **SLM Inference Service**: High-throughput log summarization service with built-in retries and fallbacks.
 - **Message Queue (Redis)**: Decouples request ingestion from task execution, enabling horizontal scaling of workers.
 
+### ✨ Features
+- **Context Isolation**: Sub-agent intercepts verbose logs, keeping the primary agent focused.
+- **Microservices Architecture**: Distributed Orchestrator, Worker, and Inference services.
+- **Ollama Integration**: Run 100% locally with Llama-3 and Qwen-2.5.
+- **Real-time Monitoring**: Premium React dashboard with token savings and latency tracking.
+- **Fault Tolerance**: Automatic fallbacks and retries for inference failures.
+
 ### Architecture Diagram
 ```text
 [User] -> [Orchestrator API] -> [Redis Queue] -> [Worker Cluster]
