@@ -79,7 +79,7 @@ async def get_metrics():
     return {
         "queue_length": redis_client.llen("task_queue"),
         "system_load": round(load_avg, 2),
-        "memory_usage": psutil.virtual_memory().percent,
+        "memory_usage_percent": psutil.virtual_memory().percent,
         "service_status": "healthy"
     }
 
