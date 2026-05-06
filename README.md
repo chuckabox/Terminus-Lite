@@ -11,10 +11,10 @@ The stack runs on Docker or natively via PowerShell.
 docker compose up --build
 ```
 
-**Option 2: Native PowerShell**
+**Option 2: Native (Python)**
 Requires a local Redis instance on port 6379.
-```powershell
-.\start_distributed.ps1
+```bash
+python run.py
 ```
 
 Access the dashboard at `http://localhost:5173`.
