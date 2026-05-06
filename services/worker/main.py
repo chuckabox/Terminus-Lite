@@ -107,7 +107,7 @@ async def summarize_with_retry(stdout: str, stderr: str, retries: int = 3):
     """Summarizes logs using the SLM service with exponential backoff and fallback."""
     for attempt in range(retries):
         try:
-            async with httpx.AsyncClient(timeout=30.0) as client:
+            async with httpx.AsyncClient(timeout=45.0) as client:
                 response = await client.post(
                     f"{SLM_SERVICE_URL}/summarize",
                     json={"stdout": stdout, "stderr": stderr}
