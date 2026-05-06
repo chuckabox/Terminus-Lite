@@ -2,6 +2,12 @@
 
 Terminus-Lite is a distributed sub-agent router designed to solve **context-window bloat**. It sits between your AI "Brain" and the terminal, ensuring the AI only sees meaningful results instead of thousands of lines of raw logs.
 
+## Live Demo
+
+**[View the Live Demo on GitHub Pages](https://chuckabox.github.io/Terminus-Lite/)**
+
+*Note: The live demo runs in **Static Mode** (simulated agents) because GitHub Pages does not support the backend services (Redis/Ollama). To use the full system with real AI agents, follow the local setup below.*
+
 ## Why use this?
 
 Standard AI agents often "choke" on large terminal outputs. If an agent runs `npm install` or `grep`, it might receive 5,000 lines of text.
@@ -27,12 +33,6 @@ Terminus-Lite divides the workload across three specialized components:
 - **State & Queue**: [Redis](https://redis.io/)
 - **Frontend**: React 19, Vite, Tailwind CSS, Framer Motion
 - **Infrastructure**: Docker & Docker Compose
-
-## Live Demo
-
-**[View the Live Demo on GitHub Pages](https://chuckabox.github.io/Terminus-Lite/)**
-
-*Note: The live demo runs in **Static Mode** (simulated agents) because GitHub Pages does not support the backend services (Redis/Ollama). To use the full system with real AI agents, follow the local setup below.*
 
 ## Getting Started (Local Setup)
 
