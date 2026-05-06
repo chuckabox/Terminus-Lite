@@ -1,0 +1,7 @@
+# Hide boilerplate and configuration from language statistics
+frontend/index.html linguist-vendored
+frontend/src/App.css linguist-vendored
+frontend/src/index.css linguist-vendored
+package-lock.json linguist-generated
+*.dockerfile linguist-documentation
+Dockerfile* linguist-documentation
