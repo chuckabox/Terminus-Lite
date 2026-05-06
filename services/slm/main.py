@@ -20,11 +20,11 @@ llm = ChatOllama(model=model_name, base_url=ollama_url, temperature=0)
 
 summary_prompt = ChatPromptTemplate.from_messages([
     ("system", "Summarize these logs into a single sentence. Mention key data points (like filenames or counts) if they exist. Be direct and avoid AI-meta commentary like 'The logs show'."),
-    ("user", "STDOUT:\n{stdout}\n\nSTDERR:\n{stderr}")
+    ("user", "STDOUT:\n{raw_stdout}\n\nSTDERR:\n{stderr}")
 ])
 
 class SummaryRequest(BaseModel):
-    stdout: str
+    raw_stdout: str
     stderr: str
 
 @app.post("/summarize")
@@ -32,7 +32,7 @@ async def summarize(request: SummaryRequest):
     logger.info("Summarizing logs", extra={"service": "slm_service"})
     try:
         chain = summary_prompt | llm
-        response = await chain.ainvoke({"stdout": request.stdout, "stderr": request.stderr})
+        response = await chain.ainvoke({"raw_stdout": request.raw_stdout, "stderr": request.stderr})
         return {"summary": response.content}
     except Exception as e:
         logger.error(f"Inference failed: {str(e)}", extra={"service": "slm_service"})
