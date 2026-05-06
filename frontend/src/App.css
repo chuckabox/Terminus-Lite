@@ -53,7 +53,35 @@ header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid var(--border-bright);
+  border-bottom: 1px solid var(--border-dim);
+  padding: 0 1rem;
+}
+
+.demo-banner {
+  background: var(--safety-orange);
+  color: var(--bg-black);
+  padding: 0.5rem 1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.demo-tag {
+  background: var(--bg-black);
+  color: var(--safety-orange);
+  padding: 2px 6px;
+  border-radius: 2px;
+  font-size: 0.6rem;
+}
+
+.demo-link {
+  color: var(--bg-black);
+  text-decoration: underline;
+  margin-left: 0.5rem;
 }
 
 .logo {
@@ -229,4 +257,37 @@ header {
 .dot.active {
   background: var(--phosphor-green);
   box-shadow: 0 0 8px var(--phosphor-green);
+}
+
+.demo-banner {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--safety-orange);
+  color: var(--bg-black);
+  padding: 0.5rem 1rem;
+  font-size: 0.7rem;
+  font-weight: 700;
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  letter-spacing: 0.05em;
+}
+
+.demo-banner-content {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.demo-label {
+  border: 1px solid var(--bg-black);
+  padding: 2px 6px;
+  border-radius: 2px;
+}
+
+.demo-text {
+  opacity: 0.9;
 }

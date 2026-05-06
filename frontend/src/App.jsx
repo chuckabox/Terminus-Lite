@@ -63,7 +63,8 @@ function App() {
     setIsDemo(true);
     setResults(null);
     setLogs([]);
-    addLog(`DEMO_MODE_ACTIVE: NO_BACKEND_DETECTED`, 'system');
+    addLog(`SYSTEM_ALERT: DEMO_MODE_ACTIVE`, 'error');
+    addLog(`NOTICE: Local backend (Redis/Ollama) unreachable. Switching to simulation...`, 'system');
     addLog(`INITIATING_SIMULATION: ${task}`, 'system');
     
     await new Promise(r => setTimeout(r, 1000));
@@ -250,6 +251,14 @@ function App() {
           )}
         </div>
       </div>
+      {isDemo && (
+        <div className="demo-banner">
+          <div className="demo-banner-content">
+            <span className="demo-label">DEMO_MODE_ACTIVE</span>
+            <span className="demo-text">Static simulation running. Backend required for real-time routing.</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
