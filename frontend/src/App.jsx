@@ -8,6 +8,7 @@ function App() {
   const [results, setResults] = useState(null);
   const [logs, setLogs] = useState([]);
   const [metrics, setMetrics] = useState({ system_load: 0, queue_length: 0 });
+  const [isDemo, setIsDemo] = useState(false);
   const terminalRef = useRef(null);
 
   const pollTask = async (taskId) => {
@@ -58,13 +59,51 @@ function App() {
     setLogs(prev => [...prev, { time, msg, type }]);
   };
 
+  const runDemo = async () => {
+    setIsDemo(true);
+    setResults(null);
+    setLogs([]);
+    addLog(`DEMO_MODE_ACTIVE: NO_BACKEND_DETECTED`, 'system');
+    addLog(`INITIATING_SIMULATION: ${task}`, 'system');
+    
+    await new Promise(r => setTimeout(r, 1000));
+    addLog(`SPAWNING_PRIMARY: LLAMA3_8B (MOCKED)...`, 'system');
+    
+    const demoSteps = [
+      { command: "ls -R", summary: "Scanning directories: /backend, /frontend, /services, /shared found.", tokens: 1123 },
+      { command: "grep -r 'TODO' .", summary: "Search complete. Found 2 markers in worker/main.py.", tokens: 845 },
+      { command: "python benchmark.py", summary: "Benchmarking complete. Efficiency gain: 88.4%.", tokens: 2102 }
+    ];
+
+    let currentSteps = [];
+    for (let i = 0; i < demoSteps.length; i++) {
+      await new Promise(r => setTimeout(r, 2000));
+      const step = demoSteps[i];
+      addLog(`[EXEC] ${step.command}`, 'system');
+      addLog(`[SLM] Distilled ${Math.floor(step.tokens * 1.5)}B -> ${Math.floor(step.tokens * 0.1)}B`);
+      currentSteps.push({
+        command: step.command,
+        summary: step.summary,
+        tokens_saved: step.tokens,
+        raw_log_size: Math.floor(step.tokens * 1.5),
+        summary_size: Math.floor(step.tokens * 0.1)
+      });
+      setResults({
+        steps: [...currentSteps],
+        total_tokens_saved: currentSteps.reduce((acc, s) => acc + s.tokens_saved, 0),
+        current_node: i === demoSteps.length - 1 ? 'primary' : 'worker'
+      });
+    }
+
+    await new Promise(r => setTimeout(r, 1500));
+    setResults(prev => ({ ...prev, status: 'completed', final_result: "Task completed successfully using simulated sub-agents." }));
+    addLog(`[STATUS] TASK COMPLETED`, 'system');
+    setLoading(false);
+  };
+
   const handleExecute = async () => {
     if (!task) return;
     setLoading(true);
-    setResults(null);
-    setLogs([]);
-    addLog(`INITIATING: ${task}`, 'system');
-    addLog(`AUTH_HANDSHAKE: ORCHESTRATOR_8001...`);
     
     try {
       const response = await fetch('http://127.0.0.1:8001/task/run', {
@@ -72,15 +111,14 @@ function App() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ task }),
       });
+      if (!response.ok) throw new Error("Backend unreachable");
       const { task_id } = await response.json();
-      
-      addLog(`QUEUE_ACCEPT: TASK_ID_${task_id.substring(0,8)}`);
-      addLog(`SPAWNING_PRIMARY: LLAMA3_8B...`, 'system');
-      
+      setResults(null);
+      setLogs([]);
+      addLog(`INITIATING: ${task}`, 'system');
       pollTask(task_id);
     } catch (error) {
-      addLog(`CONNECTION_FAILED: ${error.message}`, 'error');
-      setLoading(false);
+      runDemo();
     }
   };
 
@@ -103,8 +141,8 @@ function App() {
           TERMINUS-LITE // DISTRIBUTED_ROUTER
         </div>
         <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.7rem', fontWeight: 600 }}>
-          <span style={{ color: 'var(--phosphor-green)' }}>[ SLM_LINK: ACTIVE ]</span>
-          <span style={{ color: 'var(--data-blue)' }}>[ PRIMARY_LINK: ONLINE ]</span>
+          <span style={{ color: 'var(--phosphor-green)' }}>[ SLM_LINK: {isDemo ? 'SIMULATED' : 'ACTIVE'} ]</span>
+          <span style={{ color: 'var(--data-blue)' }}>[ PRIMARY_LINK: {isDemo ? 'OFFLINE' : 'ONLINE'} ]</span>
         </div>
       </header>
 
