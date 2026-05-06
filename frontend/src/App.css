@@ -120,7 +120,7 @@ header {
 
 .terminal-content {
   flex: 1;
-  padding: 1rem;
+  padding: 1.25rem;
   overflow-y: auto;
   font-size: 0.85rem;
   line-height: 1.4;
@@ -145,7 +145,7 @@ header {
 }
 
 .summary-block {
-  padding: 1rem;
+  padding: 1.25rem;
   background: var(--surface-mid);
   border: 1px solid var(--border-dim);
   position: relative;
@@ -175,7 +175,7 @@ header {
   background: var(--bg-black);
   border: none;
   color: var(--phosphor-green);
-  padding: 1rem;
+  padding: 1.25rem;
   font-family: var(--font-mono);
   font-size: 1rem;
   outline: none;
