@@ -2,7 +2,7 @@
 
 :root {
   --bg-black: #050505;
-  --surface-low: #0a0a0a;
+  --surface-low: #080808; /* Slightly deeper black */
   --surface-mid: #121212;
   --surface-high: #1a1a1a;
   
