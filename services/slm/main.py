@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import Dict
+from typing import Any
 import os
 from shared.utils.logging import setup_logger
 from langchain_ollama import ChatOllama
