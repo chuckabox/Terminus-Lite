@@ -29,9 +29,9 @@ async def process_task(task_id: str):
     if not task_data:
         return
     
-    task = Task.parse_raw(task_data)
+    task = Task.model_validate_json(task_data)
     task.status = TaskStatus.RUNNING
-    redis_client.set(f"task:{task.id}", task.json())
+    redis_client.set(f"task:{task.id}", task.model_dump_json())
     
     start_time = time.perf_counter()
     history = []
@@ -43,10 +43,15 @@ async def process_task(task_id: str):
             decision = await primary_agent.decide_next_step(task.request, history, current_summary)
             
             if "TASK_COMPLETE" in decision:
-                task.final_result = decision
+                task.final_result = decision.replace("TASK_COMPLETE:", "").strip()
                 break
             
-            command = decision.split("RUN:")[1].strip().split("\n")[0] if "RUN:" in decision else decision
+            # Extract command more robustly
+            if "RUN:" in decision:
+                command = decision.split("RUN:")[1].strip().split("\n")[0].strip("` ")
+            else:
+                # Fallback if model forgets the prefix but provides a command
+                command = decision.strip().split("\n")[0]
             
             # 2. Execution
             result = await executor.execute(command)
@@ -73,7 +78,7 @@ async def process_task(task_id: str):
             current_summary = summary
             
             # Save progress
-            redis_client.set(f"task:{task.id}", task.json())
+            redis_client.set(f"task:{task.id}", task.model_dump_json())
 
         task.status = TaskStatus.COMPLETED
         duration = time.perf_counter() - start_time
@@ -84,7 +89,7 @@ async def process_task(task_id: str):
         task.status = TaskStatus.FAILED
         task.error = error_msg
     
-    redis_client.set(f"task:{task.id}", task.json())
+    redis_client.set(f"task:{task.id}", task.model_dump_json())
 
 async def summarize_with_retry(stdout: str, stderr: str, retries: int = 3):
     """Summarizes logs using the SLM service with exponential backoff and fallback."""

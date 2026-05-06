@@ -30,11 +30,19 @@ class PrimaryAgent:
             )
         
         self.orchestrator_prompt = ChatPromptTemplate.from_messages([
-            ("system", """You are the Primary Orchestrator for Terminus-Lite.
-Your job is to solve user tasks by executing terminal commands.
-You delegate the execution and log analysis to an SLM Sub-Agent.
-You will receive a concise summary of the execution results.
-Based on the summary, decide if the task is complete or if further actions are needed."""),
+            ("system", """You are the Primary Orchestrator for Terminus-Lite. 
+Solve the user's task using terminal commands.
+
+RULES:
+1. If you need to run a command, output ONLY: RUN: <command>
+2. If the task is finished, output ONLY: TASK_COMPLETE: <brief summary>
+3. NO conversational noise, NO markdown, NO explanations.
+4. Use the SLM summary to judge the previous step.
+
+Example:
+User: List files
+You: RUN: dir
+"""),
             ("user", "TASK: {task}\n\nPREVIOUS_ACTIONS: {history}\n\nLATEST_EXECUTION_SUMMARY: {summary}")
         ])
 

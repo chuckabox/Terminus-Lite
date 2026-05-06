@@ -39,9 +39,9 @@ async def run_task(request: TaskRequest):
     task = Task(request=request.task)
     
     # Store task state
-    redis_client.set(f"task:{task.id}", task.json())
+    redis_client.set(f"task:{task.id}", task.model_dump_json())
     
-    # Push to queue
+    # Enqueue task
     redis_client.lpush("task_queue", task.id)
     
     logger.info(f"Task created and queued", extra={"service": "orchestrator", "request_id": task.id})
