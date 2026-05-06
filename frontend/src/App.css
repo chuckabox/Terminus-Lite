@@ -141,7 +141,7 @@ header {
 
 .main-layout {
   display: grid;
-  grid-template-columns: 400px 1fr;
+  grid-template-columns: 1fr 400px;
   gap: 1.5rem;
   padding: 1.5rem 0;
   overflow: hidden;

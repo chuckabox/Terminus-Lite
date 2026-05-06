@@ -197,6 +197,24 @@ function App() {
       </section>
 
       <div className="main-layout">
+        <div className="terminal-column">
+          <div className="terminal-deck">
+            <div className="terminal-header">
+              <span>TERMINAL_OUTPUT</span>
+              <span>BUFFER_SIZE: {logs.length} LINES</span>
+            </div>
+            <div className="terminal-content" ref={terminalRef}>
+              {logs.map((log, i) => (
+                <div key={i} className="log-entry">
+                  <span className="log-time">[{log.time}]</span>
+                  <span className={`log-msg ${log.type}`}>{log.msg}</span>
+                </div>
+              ))}
+              {logs.length === 0 && <div style={{ color: 'var(--text-dim)' }}>STDOUT_READY_FOR_INGESTION...</div>}
+            </div>
+          </div>
+        </div>
+
         <div className="summary-sidebar">
           <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             <Activity size={12} /> Activity Stream
@@ -240,24 +258,6 @@ function App() {
               WAITING_FOR_DATA_STREAM...
             </div>
           )}
-        </div>
-
-        <div className="terminal-column">
-          <div className="terminal-deck">
-            <div className="terminal-header">
-              <span>TERMINAL_OUTPUT</span>
-              <span>BUFFER_SIZE: {logs.length} LINES</span>
-            </div>
-            <div className="terminal-content" ref={terminalRef}>
-              {logs.map((log, i) => (
-                <div key={i} className="log-entry">
-                  <span className="log-time">[{log.time}]</span>
-                  <span className={`log-msg ${log.type}`}>{log.msg}</span>
-                </div>
-              ))}
-              {logs.length === 0 && <div style={{ color: 'var(--text-dim)' }}>STDOUT_READY_FOR_INGESTION...</div>}
-            </div>
-          </div>
         </div>
       </div>
 
