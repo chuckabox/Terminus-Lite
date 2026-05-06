@@ -1,4 +1,6 @@
 node_modules
+*.log
+.venv
 .git
 __pycache__
 dist
