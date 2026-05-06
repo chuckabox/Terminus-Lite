@@ -311,6 +311,7 @@ header {
   }
 
   .main-layout {
+    display: flex;
     flex-direction: column;
     padding: 0 1rem 5rem 1rem; /* Space for demo banner */
     gap: 1.5rem;
