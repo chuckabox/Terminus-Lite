@@ -230,6 +230,29 @@ header {
   cursor: not-allowed;
 }
 
+.suggestion-chip {
+  background: var(--surface-mid);
+  border: 1px solid var(--border-dim);
+  color: var(--text-mid);
+  padding: 4px 10px;
+  font-size: 0.65rem;
+  font-family: var(--font-mono);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-radius: 2px;
+}
+
+.suggestion-chip:hover:not(:disabled) {
+  border-color: var(--data-blue);
+  color: var(--text-bright);
+  background: rgba(0, 163, 255, 0.1);
+}
+
+.suggestion-chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .pulse {
   animation: pulse-ring 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }

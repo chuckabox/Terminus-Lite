@@ -220,6 +220,25 @@ function App() {
             </button>
           </div>
 
+          <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
+            <span style={{ fontSize: '0.6rem', color: 'var(--text-dim)', alignSelf: 'center', marginRight: '0.5rem' }}>SUGGESTED_TASKS:</span>
+            {[
+              "List every file in the project recursively",
+              "Search for 'TODO' in the codebase",
+              "Benchmark token efficiency",
+              "Summarize project architecture"
+            ].map((suggestion, i) => (
+              <button 
+                key={i} 
+                className="suggestion-chip"
+                onClick={() => setTask(suggestion)}
+                disabled={loading}
+              >
+                {suggestion}
+              </button>
+            ))}
+          </div>
+
           <div className="terminal-deck">
             <div className="terminal-header">
               <span>TERMINAL_OUTPUT</span>
