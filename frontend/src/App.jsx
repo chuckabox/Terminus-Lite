@@ -85,10 +85,10 @@ function App() {
     addLog(`SPAWNING_PRIMARY: LLAMA3_8B (MOCKED)...`, 'system');
     
     const demoSteps = [
-      { command: "ls -R", summary: "Scanning directories: /backend, /frontend, /services, /shared found.", tokens: 1123 },
-      { command: "cat CONTEXT_SAVER.md", summary: "File read complete. Document explains 'Context Fatigue' and the 'Split-Brain' distillation solution.", tokens: 1542 },
-      { command: "grep -r 'TODO' .", summary: "Search complete. Found 2 markers in worker/main.py.", tokens: 845 },
-      { command: "python benchmark.py", summary: "Benchmarking complete. Efficiency gain: 88.4%.", tokens: 2102 }
+      { command: "ls -R mock_target/", summary: "Project structure identified: 3 directories (src, tests, config) and 4 files found.", tokens: 840 },
+      { command: "cat CONTEXT_SAVER.md", summary: "Theory check complete. Document explains the 'Split-Brain' distillation logic.", tokens: 1542 },
+      { command: "grep -r 'TODO' mock_target/", summary: "Found 3 actionable items: OAuth2 flow (auth.py), JWT rotation (auth.py), and hardcoded password (settings.yaml).", tokens: 1205 },
+      { command: "python benchmark.py --target mock_target/", summary: "Analysis complete. Distillation saved 88.4% of context overhead for this codebase.", tokens: 2102 }
     ];
 
     let currentSteps = [];
@@ -225,9 +225,9 @@ function App() {
             <span style={{ fontSize: '0.6rem', color: 'var(--text-dim)', alignSelf: 'center', marginRight: '0.5rem' }}>SUGGESTED_TASKS:</span>
             {[
               "Read and summarize CONTEXT_SAVER.md",
-              "List every file in the project recursively",
-              "Search for 'TODO' in the codebase",
-              "Benchmark token efficiency"
+              "List every file in 'mock_target' recursively",
+              "Search for 'TODO' markers in 'mock_target'",
+              "Benchmark efficiency on 'mock_target'"
             ].map((suggestion, i) => (
               <button 
                 key={i} 
