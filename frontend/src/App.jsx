@@ -10,19 +10,39 @@ function App() {
   const [logs, setLogs] = useState([]);
   const terminalRef = useRef(null);
 
+  const pollTask = async (taskId) => {
+    const interval = setInterval(async () => {
+      try {
+        const response = await fetch(`http://localhost:8001/task/${taskId}`);
+        const data = await response.json();
+        setResults(data);
+        
+        if (data.status === 'completed' || data.status === 'failed') {
+          clearInterval(interval);
+          setLoading(false);
+          setLogs(prev => [...prev, `> Task ${data.status}.`]);
+        }
+      } catch (error) {
+        console.error("Polling error:", error);
+      }
+    }, 1000);
+  };
+
   const handleExecute = async () => {
     if (!task) return;
     setLoading(true);
     setLogs([`> Initiating task: ${task}`, `> Spawning Primary Agent (Frontier LLM)...`]);
     
     try {
-      const response = await fetch('http://localhost:8000/execute', {
+      const response = await fetch('http://localhost:8001/task/run', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ task }),
       });
-      const data = await response.json();
-      setResults(data);
+      const { task_id } = await response.json();
+      
+      // Start polling
+      pollTask(task_id);
       
       // Simulate log streaming
       let currentLogs = [...logs];

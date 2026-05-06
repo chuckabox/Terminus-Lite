@@ -1,67 +1,54 @@
-# Terminus-Lite: SLM Sub-Agent Router
+# Terminus-Lite: Distributed SLM Sub-Agent Router
 
-**Terminus-Lite** is a specialized, fine-tuned sub-agent system designed exclusively to handle verbose terminal execution logs, keeping the main orchestration agent's context window clean and fast.
+**Terminus-Lite** is a production-grade, distributed execution offloading system. Built with Google-scale engineering fundamentals, it demonstrates how to leverage Small Language Models (SLMs) in a resilient, scalable, and observable backend architecture.
 
-## 🚀 Concept
-Replicating the isolation of subtask context by implementing an architecture where a primary agent delegates search or debugging tasks to a smaller, localized model (SLM). The SLM processes heavy log outputs and returns only a concise summary to the main agent.
+## 🏗 System Architecture
 
-## 🛠 Tech Stack
-- **Primary Agent**: Frontier LLMs (GPT-4o / Claude 3.5 Sonnet) via OpenAI/Anthropic APIs.
-- **SLM Sub-Agent**: Qwen-2.5-3B / Llama-3.2-3B optimized for terminal log parsing.
-- **Inference**: FastAPI / vLLM / Modal (Serverless GPU Inference).
-- **Workflow**: LangGraph / Custom Orchestration.
-- **Frontend**: Next.js 14+ / React Dashboard with real-time token savings tracking.
+Terminus-Lite is decoupled into specialized microservices to ensure independent scalability and fault tolerance:
 
-## 📈 Impact
-- **Designed a multi-agent architecture** utilizing a primary orchestration model and an SLM sub-agent, specifically isolating verbose build logs and test results from the main context window.
-- **Reduced main agent token usage by ~30%** and significantly lowered inference costs by routing terminal execution subtasks to a localized 4B parameter model.
-- **Deployed a high-throughput SLM inference endpoint** using vLLM and FastAPI, achieving sub-second latency for continuous terminal execution feedback loops.
+- **Orchestrator API**: FastAPI-based gateway that manages task lifecycle and state using Redis.
+- **Worker Cluster**: Asynchronous execution nodes that handle terminal operations and agent logic.
+- **SLM Inference Service**: High-throughput log summarization service with built-in retries and fallbacks.
+- **Message Queue (Redis)**: Decouples request ingestion from task execution, enabling horizontal scaling of workers.
 
-## ⚡ Quick Start
-
-The easiest way to get started is to use the provided launch script which handles both backend and frontend.
-
-1. **Configure Environment**
-   - Install [Ollama](https://ollama.com/).
-   - Pull the models: `ollama pull llama3:8b` and `ollama pull qwen2.5:3b`.
-   - The project is configured to use these local models by default in `backend/.env`.
-
-2. **Run All-in-One Launch Script** (Windows PowerShell)
-   ```powershell
-   .\start.ps1
-   ```
-
-This will automatically:
-- Start the **FastAPI Backend** on `http://localhost:8000`
-- Launch the **React Dashboard** on `http://localhost:5173`
-
----
-
-## 🛠 Manual Setup
-
-### 1. Backend
-```powershell
-cd backend
-pip install -r requirements.txt
-python main.py
+### Architecture Diagram
+```text
+[User] -> [Orchestrator API] -> [Redis Queue] -> [Worker Cluster]
+                                                      |
+                                          [SLM Inference Service]
+                                                      |
+                                              [Ollama Engine]
 ```
 
-### 2. Frontend
+## 🚀 Deployment
+
+### Local Development (Docker Compose)
+The entire stack can be launched with a single command:
 ```powershell
-cd frontend
-npm install
-npm run dev
+docker-compose up --build
 ```
 
----
+### Manual Service Start
+If running without Docker, ensure Redis is active:
+1. `python services/orchestrator/main.py` (Port 8001)
+2. `python services/slm/main.py` (Port 8002)
+3. `python services/worker/main.py`
 
-## 🖥 How to Use
+## 📊 Observability & Metrics
 
-1. **Open the Dashboard**: Navigate to `http://localhost:5173` in your browser.
-2. **Enter a Task**: In the input field, describe a terminal-heavy task (e.g., *"Build the project and run all unit tests"*).
-3. **Watch the Offloading**: 
-   - The **Execution Logs** will show raw terminal activity.
-   - The **SLM Context Summaries** will show the concise data sent to the primary agent.
-   - The **Token Savings** widget will track how much context you've saved in real-time.
+Terminus-Lite implements structured JSON logging for all services and tracks critical KPIs:
+- **Token Efficiency**: Measures context saved by SLM offloading.
+- **Latency (p95)**: End-to-end task execution time.
+- **Reliability**: Exponential backoff on SLM failures with primary-model fallback.
 
+### Running Benchmarks
+Evaluate system performance and scalability:
+```powershell
+python scripts/benchmark.py
+```
 
+## 🛠 Engineering Fundamentals
+- **Distributed State**: Tasks are persisted in Redis, allowing workers to be stateless and replaceable.
+- **Resiliency**: Circuit breakers and fallbacks ensure the system remains operational even if the SLM service degrades.
+- **Schema Safety**: Shared Pydantic models ensure consistency across the distributed boundary.
+- **Scalability**: Designed to handle 100+ concurrent jobs by scaling the Worker Cluster.
