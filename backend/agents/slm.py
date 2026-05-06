@@ -12,14 +12,22 @@ class SLMSubAgent:
     It identifies errors, warnings, and key success indicators, providing 
     a concise summary to the Primary Agent.
     """
-    def __init__(self, model_name: str = "gpt-3.5-turbo"): # Defaulting to 3.5 for 'lite' simulation, but user can point to local vLLM
-        self.llm = ChatOpenAI(
-            model=model_name,
-            temperature=0,
-            # In a real Terminus-Lite setup, base_url would point to a vLLM/Modal endpoint
-            # base_url=os.getenv("SLM_BASE_URL", "http://localhost:8000/v1"),
-            # api_key=os.getenv("SLM_API_KEY", "fake-key")
-        )
+    def __init__(self, model_name: str = None):
+        load_dotenv()
+        self.model_type = os.getenv("SLM_MODEL_TYPE", "openai").lower()
+        
+        if self.model_type == "ollama":
+            from langchain_ollama import ChatOllama
+            self.llm = ChatOllama(
+                model=os.getenv("SLM_MODEL_NAME", "qwen2.5:3b"),
+                base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+                temperature=0
+            )
+        else:
+            self.llm = ChatOpenAI(
+                model=model_name or os.getenv("SLM_MODEL_NAME", "gpt-3.5-turbo"),
+                temperature=0
+            )
         
         self.summary_prompt = ChatPromptTemplate.from_messages([
             ("system", """You are a specialized Terminal Log Analyzer (SLM Sub-Agent). 

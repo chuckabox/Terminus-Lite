@@ -8,7 +8,7 @@ async def run_demo():
     
     print(f"Sending task: {task}")
     try:
-        async with httpx.AsyncClient(timeout=60.0) as client:
+        async with httpx.AsyncClient(timeout=120.0) as client:
             response = await client.post(url, json={"task": task})
             if response.status_code == 200:
                 data = response.json()

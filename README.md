@@ -22,7 +22,9 @@ Replicating the isolation of subtask context by implementing an architecture whe
 The easiest way to get started is to use the provided launch script which handles both backend and frontend.
 
 1. **Configure Environment**
-   - Add your `OPENAI_API_KEY` to `backend/.env`.
+   - Install [Ollama](https://ollama.com/).
+   - Pull the models: `ollama pull llama3:8b` and `ollama pull qwen2.5:3b`.
+   - The project is configured to use these local models by default in `backend/.env`.
 
 2. **Run All-in-One Launch Script** (Windows PowerShell)
    ```powershell

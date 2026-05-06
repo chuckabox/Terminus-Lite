@@ -11,8 +11,22 @@ class PrimaryAgent:
     It receives task requests and decides which commands to run.
     It never sees raw logs, only the summaries from the SLM.
     """
-    def __init__(self, model_name: str = "gpt-4o"):
-        self.llm = ChatOpenAI(model=model_name, temperature=0)
+    def __init__(self, model_name: str = None):
+        load_dotenv()
+        self.model_type = os.getenv("PRIMARY_MODEL_TYPE", "openai").lower()
+        
+        if self.model_type == "ollama":
+            from langchain_ollama import ChatOllama
+            self.llm = ChatOllama(
+                model=os.getenv("PRIMARY_MODEL_NAME", "llama3:8b"),
+                base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+                temperature=0
+            )
+        else:
+            self.llm = ChatOpenAI(
+                model=model_name or os.getenv("PRIMARY_MODEL_NAME", "gpt-4o"),
+                temperature=0
+            )
         
         self.orchestrator_prompt = ChatPromptTemplate.from_messages([
             ("system", """You are the Primary Orchestrator for Terminus-Lite.
