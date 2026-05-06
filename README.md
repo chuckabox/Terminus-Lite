@@ -56,3 +56,5 @@ To measure how much context you're saving on your specific machine:
 ```bash
 python scripts/benchmark.py
 ```
+
+<!-- Documentation Refinement -->
