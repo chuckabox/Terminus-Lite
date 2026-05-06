@@ -9,7 +9,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-app = FastAPI(title="Terminus-Lite Orchestrator", version="1.1.0")
+app = FastAPI() # Rate limiting enabled(title="Terminus-Lite Orchestrator", version="1.1.0")
 
 # Enable CORS
 app.add_middleware(
