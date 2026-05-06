@@ -261,6 +261,23 @@ function App() {
           <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
             Activity Stream
           </div>
+
+          {isDemo && (
+            <div className="mock-explorer">
+              <div className="explorer-header">
+                <span className="explorer-title">TARGET: /mock_target</span>
+                <a href="https://github.com/chuckabox/Terminus-Lite/tree/main/mock_target" target="_blank" rel="noreferrer" className="github-link">GITHUB</a>
+              </div>
+              <div className="file-tree">
+                <div>├── config/</div>
+                <div>│   └── settings.yaml <span className="tree-meta">(TODO)</span></div>
+                <div>├── src/</div>
+                <div>│   └── auth.py <span className="tree-meta">(TODO)</span></div>
+                <div>├── tests/</div>
+                <div>└── CONTEXT_SAVER.md</div>
+              </div>
+            </div>
+          )}
           
           {results?.final_result && (
             <div className="summary-block" style={{ border: '1px solid var(--phosphor-green)', background: 'rgba(0,255,65,0.05)' }}>
