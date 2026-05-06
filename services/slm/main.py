@@ -4,7 +4,7 @@ from typing import Dict
 import os
 from shared.utils.logging import setup_logger
 from langchain_ollama import ChatOllama
-from langchain.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 
 load_dotenv()
