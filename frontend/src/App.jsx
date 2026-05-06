@@ -11,16 +11,29 @@ function App() {
   const terminalRef = useRef(null);
 
   const pollTask = async (taskId) => {
+    let lastStepCount = 0;
     const interval = setInterval(async () => {
       try {
         const response = await fetch(`http://localhost:8001/task/${taskId}`);
         const data = await response.json();
         setResults(data);
         
+        // Log new steps as they appear
+        if (data.steps.length > lastStepCount) {
+          const newStep = data.steps[data.steps.length - 1];
+          setLogs(prev => [...prev, 
+            `> [Step ${data.steps.length}] Executing: ${newStep.command}`,
+            `> [SLM] Summarized ${newStep.raw_log_size} bytes -> ${newStep.summary_size} bytes`
+          ]);
+          lastStepCount = data.steps.length;
+        }
+
         if (data.status === 'completed' || data.status === 'failed') {
           clearInterval(interval);
           setLoading(false);
-          setLogs(prev => [...prev, `> Task ${data.status}.`]);
+          const statusLabel = data.status.toUpperCase();
+          const errorDetail = data.error ? `: ${data.error}` : '';
+          setLogs(prev => [...prev, `> Task ${statusLabel}${errorDetail}.`]);
         }
       } catch (error) {
         console.error("Polling error:", error);
@@ -44,20 +57,8 @@ function App() {
       // Start polling
       pollTask(task_id);
       
-      // Simulate log streaming
-      let currentLogs = [...logs];
-      data.steps.forEach((step, i) => {
-        currentLogs.push(`> [Step ${i+1}] Executing: ${step.command}`);
-        currentLogs.push(`> [SLM] Intercepted ${step.raw_log_size} bytes of raw logs.`);
-        currentLogs.push(`> [SLM] Summarizing execution...`);
-        currentLogs.push(`> [Primary] Received summary: ${step.summary.substring(0, 50)}...`);
-      });
-      currentLogs.push(`> Task Complete.`);
-      setLogs(currentLogs);
-
     } catch (error) {
       setLogs(prev => [...prev, `! Error connecting to Terminus-Lite Backend: ${error.message}`]);
-    } finally {
       setLoading(false);
     }
   };

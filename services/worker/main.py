@@ -79,9 +79,10 @@ async def process_task(task_id: str):
         duration = time.perf_counter() - start_time
         logger.info(f"Task {task_id} completed in {duration:.2f}s", extra={"service": "worker", "request_id": task_id, "duration": duration})
     except Exception as e:
-        logger.error(f"Task failed: {str(e)}", extra={"service": "worker", "request_id": task_id})
+        error_msg = f"{type(e).__name__}: {str(e)}"
+        logger.error(f"Task failed: {error_msg}", extra={"service": "worker", "request_id": task_id})
         task.status = TaskStatus.FAILED
-        task.error = str(e)
+        task.error = error_msg
     
     redis_client.set(f"task:{task.id}", task.json())
 
