@@ -28,7 +28,13 @@ Terminus-Lite divides the workload across three specialized components:
 - **Frontend**: React 19, Vite, Tailwind CSS, Framer Motion
 - **Infrastructure**: Docker & Docker Compose
 
-## Getting Started
+## Live Demo
+
+**[View the Live Demo on GitHub Pages](https://chuckabox.github.io/Terminus-Lite/)**
+
+*Note: The live demo runs in **Static Mode** (simulated agents) because GitHub Pages does not support the backend services (Redis/Ollama). To use the full system with real AI agents, follow the local setup below.*
+
+## Getting Started (Local Setup)
 
 ### 1. Launch the Stack
 The stack includes a local **Ollama** instance, so all AI processing happens on your own hardware.
@@ -44,13 +50,13 @@ Open [http://localhost:5173](http://localhost:5173) and enter a task that would 
 ### 3. Observe Distillation
 The dashboard will show you the "Token Savings." You'll see the raw output size (e.g., 15KB) vs. what was actually sent to the Brain (e.g., 100 bytes).
 
-## Infrastructure
+## Infrastructure & Security
 
 - **Local Inference**: Powered by Ollama. No API keys or external costs required.
 - **Isolation**: Commands run inside the Docker worker, protecting your host system.
 - **Persistence**: Task state and summaries are stored in Redis for real-time monitoring.
 
-## Benchmarking
+## Performance Benchmarking
 
 To measure how much context you're saving on your specific machine:
 ```bash

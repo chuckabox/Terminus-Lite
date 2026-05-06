@@ -140,7 +140,12 @@ function App() {
           </svg>
           TERMINUS-LITE // DISTRIBUTED_ROUTER
         </div>
-        <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.7rem', fontWeight: 600 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', fontSize: '0.7rem', fontWeight: 600 }}>
+          {isDemo && (
+            <div style={{ background: 'var(--safety-orange)', color: 'var(--bg-black)', padding: '2px 8px', borderRadius: '2px', fontSize: '0.6rem', fontWeight: 800 }}>
+              STATIC_DEMO_MODE
+            </div>
+          )}
           <span style={{ color: 'var(--phosphor-green)' }}>[ SLM_LINK: {isDemo ? 'SIMULATED' : 'ACTIVE'} ]</span>
           <span style={{ color: 'var(--data-blue)' }}>[ PRIMARY_LINK: {isDemo ? 'OFFLINE' : 'ONLINE'} ]</span>
         </div>
