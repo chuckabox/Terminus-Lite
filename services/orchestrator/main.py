@@ -41,7 +41,7 @@ async def run_task(request: TaskRequest):
     task = Task(request=request.task)
     
     # Store task state
-    redis_client.set(f"task:{task.id}", task.model_dump_json())
+    redis_client.set(f"terminus:task:{task.id}", task.model_dump_json())
     
     # Enqueue task
     redis_client.lpush("task_queue", task.id)
