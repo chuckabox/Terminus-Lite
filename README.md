@@ -4,7 +4,7 @@ Terminus-Lite is a distributed sub-agent router designed to solve **context-wind
 
 ## Live Demo
 
-**[View the Live Demo on GitHub Pages](https://chuckabox.github.io/Terminus-Lite/)**
+**[Launch Live Demo](https://chuckabox.github.io/Terminus-Lite/)**
 
 ### Static Demo vs. Local Installation
 
