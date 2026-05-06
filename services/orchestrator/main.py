@@ -31,6 +31,11 @@ redis_client = redis.Redis(
 
 @app.post("/task/run", response_model=TaskResponse)
 async def run_task(request: TaskRequest):
+    if not request.task.strip():
+        raise HTTPException(status_code=400, detail="Task description cannot be empty")
+    if len(request.task) > 500:
+        raise HTTPException(status_code=400, detail="Task description too long (max 500 chars)")
+        
     task = Task(request=request.task)
     
     # Store task state
