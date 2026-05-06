@@ -129,7 +129,7 @@ async def summarize_with_retry(stdout: str, stderr: str, retries: int = 3):
 async def worker_loop():
     logger.info("Worker started, waiting for tasks...", extra={"service": "worker"})
     while True:
-        task_id = redis_client.brpop("task_queue", timeout=1)
+        task_id = redis_client.brpop(REDIS_QUEUE_NAME, timeout=1)
         if task_id:
             logger.info(f"Picked up task {task_id[1]}", extra={"service": "worker", "request_id": task_id[1]})
             await process_task(task_id[1])
