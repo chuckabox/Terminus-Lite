@@ -33,6 +33,7 @@ async def process_task(task_id: str):
     task.status = TaskStatus.RUNNING
     redis_client.set(f"task:{task.id}", task.json())
     
+    start_time = time.perf_counter()
     history = []
     current_summary = "No previous execution."
     
@@ -75,6 +76,8 @@ async def process_task(task_id: str):
             redis_client.set(f"task:{task.id}", task.json())
 
         task.status = TaskStatus.COMPLETED
+        duration = time.perf_counter() - start_time
+        logger.info(f"Task {task_id} completed in {duration:.2f}s", extra={"service": "worker", "request_id": task_id, "duration": duration})
     except Exception as e:
         logger.error(f"Task failed: {str(e)}", extra={"service": "worker", "request_id": task_id})
         task.status = TaskStatus.FAILED
