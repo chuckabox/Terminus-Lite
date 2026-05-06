@@ -121,7 +121,7 @@ header {
 .terminal-content {
   flex: 1;
   padding: 1.25rem;
-  overflow-y: auto;
+  overflow-y: overlay;
   font-size: 0.85rem;
   line-height: 1.4;
 }
@@ -141,7 +141,7 @@ header {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  overflow-y: auto;
+  overflow-y: overlay;
 }
 
 .summary-block {
