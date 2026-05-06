@@ -94,6 +94,8 @@ async def process_task(task_id: str):
         duration = time.perf_counter() - start_time
         logger.info(f"[WORKER] Processing task {task_id} completed in {duration:.2f}s", extra={"service": "worker", "request_id": task_id, "duration": duration})
     except Exception as e:
+        # Log critical failure
+        logger.critical(f"Worker loop error: {str(e)}")
         error_msg = f"{type(e).__name__}: {str(e)}"
         logger.error(f"Task failed: {error_msg}", extra={"service": "worker", "request_id": task_id})
         task.status = TaskStatus.FAILED
@@ -113,6 +115,8 @@ async def summarize_with_retry(stdout: str, stderr: str, retries: int = 3):
                 if response.status_code == 200:
                     return response.json()["summary"]
         except Exception as e:
+        # Log critical failure
+        logger.critical(f"Worker loop error: {str(e)}")
             wait_time = 2 ** attempt
             logger.warning(f"SLM failure (attempt {attempt+1}): {str(e)}. Retrying in {wait_time}s...")
             await asyncio.sleep(wait_time)
