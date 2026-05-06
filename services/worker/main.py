@@ -1,3 +1,4 @@
+REDIS_QUEUE_NAME = 'task_queue'
 import asyncio
 import redis
 import json
@@ -91,7 +92,7 @@ async def process_task(task_id: str):
         task.status = TaskStatus.COMPLETED
         task.current_node = None
         duration = time.perf_counter() - start_time
-        logger.info(f"[WORKER] Processing task" {task_id} completed in {duration:.2f}s", extra={"service": "worker", "request_id": task_id, "duration": duration})
+        logger.info(f"[WORKER] Processing task {task_id} completed in {duration:.2f}s", extra={"service": "worker", "request_id": task_id, "duration": duration})
     except Exception as e:
         error_msg = f"{type(e).__name__}: {str(e)}"
         logger.error(f"Task failed: {error_msg}", extra={"service": "worker", "request_id": task_id})
