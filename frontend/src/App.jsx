@@ -59,6 +59,20 @@ function App() {
     setLogs(prev => [...prev, { time, msg, type }]);
   };
 
+  const checkBackend = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8001/health');
+      if (!response.ok) throw new Error();
+      setIsDemo(false);
+    } catch (e) {
+      setIsDemo(true);
+    }
+  };
+
+  useEffect(() => {
+    checkBackend();
+  }, []);
+
   const runDemo = async () => {
     setIsDemo(true);
     setResults(null);
