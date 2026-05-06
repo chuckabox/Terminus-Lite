@@ -86,6 +86,7 @@ function App() {
     
     const demoSteps = [
       { command: "ls -R", summary: "Scanning directories: /backend, /frontend, /services, /shared found.", tokens: 1123 },
+      { command: "cat CONTEXT_SAVER.md", summary: "File read complete. Document explains 'Context Fatigue' and the 'Split-Brain' distillation solution.", tokens: 1542 },
       { command: "grep -r 'TODO' .", summary: "Search complete. Found 2 markers in worker/main.py.", tokens: 845 },
       { command: "python benchmark.py", summary: "Benchmarking complete. Efficiency gain: 88.4%.", tokens: 2102 }
     ];
@@ -223,10 +224,10 @@ function App() {
           <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem', flexWrap: 'wrap' }}>
             <span style={{ fontSize: '0.6rem', color: 'var(--text-dim)', alignSelf: 'center', marginRight: '0.5rem' }}>SUGGESTED_TASKS:</span>
             {[
+              "Read and summarize CONTEXT_SAVER.md",
               "List every file in the project recursively",
               "Search for 'TODO' in the codebase",
-              "Benchmark token efficiency",
-              "Summarize project architecture"
+              "Benchmark token efficiency"
             ].map((suggestion, i) => (
               <button 
                 key={i} 
