@@ -1,22 +1,29 @@
-# Ensure Redis is running (This script assumes Redis is installed locally)
-# If you don't have Redis, this will fail. You can install it via WSL or Memurai for Windows.
-
+# Terminus-Lite Distributed Launcher
 Write-Host "Starting Terminus-Lite Distributed Stack..." -ForegroundColor Cyan
 
-# Start Orchestrator (Port 8001)
-Write-Host "[1/4] Launching Orchestrator API..." -ForegroundColor Green
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "$host.UI.RawUI.WindowTitle='Orchestrator'; $env:PYTHONPATH='.'; python services/orchestrator/main.py"
+# 1. Start Redis if not already running
+$redisPath = "C:\Program Files\Redis\redis-server.exe"
+if (Get-Process "redis-server" -ErrorAction SilentlyContinue) {
+    Write-Host "Redis is already running." -ForegroundColor Gray
+} elseif (Test-Path $redisPath) {
+    Write-Host "Starting Redis Server..." -ForegroundColor Yellow
+    Start-Process $redisPath -WindowStyle Hidden
+}
 
-# Start SLM Inference Service (Port 8002)
-Write-Host "[2/4] Launching SLM Service..." -ForegroundColor Green
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "$host.UI.RawUI.WindowTitle='SLM Service'; $env:PYTHONPATH='.'; python services/slm/main.py"
+# 2. Start Orchestrator (Port 8001)
+Write-Host "[1/3] Launching Orchestrator API..." -ForegroundColor Green
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "`$env:PYTHONPATH='.'; python services/orchestrator/main.py"
 
-# Start Worker Cluster (Node 1)
-Write-Host "[3/4] Launching Worker Node..." -ForegroundColor Green
-Start-Process powershell -ArgumentList "-NoExit", "-Command", "$host.UI.RawUI.WindowTitle='Worker'; $env:PYTHONPATH='.'; python services/worker/main.py"
+# 3. Start SLM Service (Port 8002)
+Write-Host "[2/3] Launching SLM Service..." -ForegroundColor Green
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "`$env:PYTHONPATH='.'; python services/slm/main.py"
 
-# Start Frontend (Port 5173)
-Write-Host "[4/4] Launching Frontend Dashboard..." -ForegroundColor Green
+# 4. Start Worker Node
+Write-Host "[3/3] Launching Worker Node..." -ForegroundColor Green
+Start-Process powershell -ArgumentList "-NoExit", "-Command", "`$env:PYTHONPATH='.'; python services/worker/main.py"
+
+# 5. Start Frontend
+Write-Host "Launching Frontend Dashboard..." -ForegroundColor Green
 Start-Process powershell -ArgumentList "-NoExit", "-Command", "cd frontend; npm run dev"
 
-Write-Host "Stack initiated. Monitor individual windows for logs." -ForegroundColor Cyan
+Write-Host "System initiated. Access the dashboard at http://localhost:5173" -ForegroundColor Cyan
