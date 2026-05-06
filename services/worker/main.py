@@ -40,6 +40,9 @@ async def process_task(task_id: str):
     try:
         for i in range(3): # Max steps
             # 1. Primary Agent decision
+            task.current_node = "primary"
+            redis_client.set(f"task:{task.id}", task.model_dump_json())
+            
             decision = await primary_agent.decide_next_step(task.request, history, current_summary)
             
             if "TASK_COMPLETE" in decision:
@@ -54,9 +57,13 @@ async def process_task(task_id: str):
                 command = decision.strip().split("\n")[0]
             
             # 2. Execution
+            task.current_node = "worker"
+            redis_client.set(f"task:{task.id}", task.model_dump_json())
             result = await executor.execute(command)
             
-            # 3. SLM Summarization with Retries and Fallback
+            # 3. SLM Summarization
+            task.current_node = "slm"
+            redis_client.set(f"task:{task.id}", task.model_dump_json())
             summary = await summarize_with_retry(result["stdout"], result["stderr"])
             
             # Update task
@@ -81,6 +88,7 @@ async def process_task(task_id: str):
             redis_client.set(f"task:{task.id}", task.model_dump_json())
 
         task.status = TaskStatus.COMPLETED
+        task.current_node = None
         duration = time.perf_counter() - start_time
         logger.info(f"Task {task_id} completed in {duration:.2f}s", extra={"service": "worker", "request_id": task_id, "duration": duration})
     except Exception as e:

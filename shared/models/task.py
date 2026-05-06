@@ -22,6 +22,7 @@ class Task(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
     request: str
     status: TaskStatus = TaskStatus.PENDING
+    current_node: Optional[str] = None
     steps: List[ExecutionStep] = []
     final_result: Optional[str] = None
     error: Optional[str] = None

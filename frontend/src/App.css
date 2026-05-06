@@ -206,7 +206,31 @@ header {
   cursor: not-allowed;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: var(--bg-black); }
-::-webkit-scrollbar-thumb { background: var(--border-bright); }
+.pulse {
+  animation: pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-ring {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .3; }
+}
+
+.status-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+  color: var(--text-dim);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--surface-high);
+}
+
+.dot.active {
+  background: var(--phosphor-green);
+  box-shadow: 0 0 8px var(--phosphor-green);
+}

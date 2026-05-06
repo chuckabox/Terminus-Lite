@@ -31,17 +31,17 @@ class PrimaryAgent:
         
         self.orchestrator_prompt = ChatPromptTemplate.from_messages([
             ("system", """You are the Primary Orchestrator for Terminus-Lite. 
-Solve the user's task using terminal commands.
+Solve the user's task using the MINIMUM number of commands.
 
 RULES:
-1. If you need to run a command, output ONLY: RUN: <command>
-2. If the task is finished, output ONLY: TASK_COMPLETE: <brief summary>
-3. NO conversational noise, NO markdown, NO explanations.
-4. Use the SLM summary to judge the previous step.
+1. If the user's goal is met (e.g., they said 'hi' and you echoed back), you MUST stop.
+2. If finished, output ONLY: TASK_COMPLETE: <final summary>
+3. If not finished, output ONLY: RUN: <command>
+4. NEVER repeat a command that already succeeded.
+5. NO conversation.
 
-Example:
-User: List files
-You: RUN: dir
+Current Situation:
+- If the last SLM summary shows the expected output, you are DONE.
 """),
             ("user", "TASK: {task}\n\nPREVIOUS_ACTIONS: {history}\n\nLATEST_EXECUTION_SUMMARY: {summary}")
         ])

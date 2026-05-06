@@ -88,18 +88,33 @@ function App() {
 
       <section className="hud-metrics">
         <div className="metric-item">
-          <div className="metric-label">Token Delta</div>
-          <div className="metric-value" style={{ color: 'var(--phosphor-green)' }}>
-            -{results ? results.total_tokens_saved.toLocaleString() : '0'}
+          <div className="metric-label">Status Overview</div>
+          <div style={{ display: 'flex', gap: '1rem', marginTop: '0.25rem' }}>
+            <div className="status-indicator">
+              <div className={`dot ${results?.current_node === 'primary' ? 'active pulse' : ''}`}></div>
+              PRIMARY
+            </div>
+            <div className="status-indicator">
+              <div className={`dot ${results?.current_node === 'worker' ? 'active pulse' : ''}`}></div>
+              WORKER
+            </div>
+            <div className="status-indicator">
+              <div className={`dot ${results?.current_node === 'slm' ? 'active pulse' : ''}`}></div>
+              SLM
+            </div>
           </div>
         </div>
         <div className="metric-item">
-          <div className="metric-label">Avg Latency</div>
-          <div className="metric-value">242ms</div>
+          <div className="metric-label">Step Index</div>
+          <div className="metric-value">
+            {results ? results.steps.length : '0'}<span style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>/03</span>
+          </div>
         </div>
         <div className="metric-item">
-          <div className="metric-label">Queue Time</div>
-          <div className="metric-value">12ms</div>
+          <div className="metric-label">Token Delta</div>
+          <div className="metric-value" style={{ color: 'var(--phosphor-green)' }}>
+            -{results ? results.total_tokens_saved.toLocaleString() : '0'}B
+          </div>
         </div>
         <div className="metric-item">
           <div className="metric-label">System Load</div>
