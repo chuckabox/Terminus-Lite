@@ -133,6 +133,18 @@ function App() {
           </button>
         </section>
 
+        {results?.final_result && (
+          <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="summary-card" 
+            style={{ borderLeft: '4px solid var(--success)' }}
+          >
+            <div style={{ fontWeight: 800, fontSize: '0.75rem', color: 'var(--success)', marginBottom: '0.5rem' }}>FINAL TASK RESOLUTION</div>
+            <div style={{ fontSize: '1.1rem', fontWeight: 600 }}>{results.final_result}</div>
+          </motion.div>
+        )}
+
         <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
