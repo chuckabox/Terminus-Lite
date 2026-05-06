@@ -81,7 +81,7 @@ header {
 
 .metric-label {
   font-size: 0.65rem;
-  color: var(--text-dim);
+  color: rgba(85, 85, 85, 0.8);
   text-transform: uppercase;
   margin-bottom: 0.25rem;
 }
@@ -132,7 +132,7 @@ header {
   gap: 1rem;
 }
 
-.log-time { color: var(--text-dim); min-width: 80px; }
+.log-time { color: rgba(85, 85, 85, 0.8); min-width: 80px; }
 .log-msg { color: var(--text-mid); }
 .log-msg.system { color: var(--phosphor-green); }
 .log-msg.error { color: var(--safety-orange); }
@@ -198,7 +198,7 @@ header {
 
 .run-btn:disabled {
   background: var(--surface-high);
-  color: var(--text-dim);
+  color: rgba(85, 85, 85, 0.8);
   cursor: not-allowed;
 }
 
@@ -216,7 +216,7 @@ header {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.65rem;
-  color: var(--text-dim);
+  color: rgba(85, 85, 85, 0.8);
 }
 
 .dot {
