@@ -95,11 +95,14 @@ function App() {
         <div className="stats-card">
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-secondary)', marginBottom: '0.5rem' }}>
             <Activity size={18} />
-            <span style={{ fontWeight: 600 }}>Latency</span>
+            <span style={{ fontWeight: 600 }}>Performance</span>
           </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800 }}>240ms</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+             <div style={{ fontSize: '2rem', fontWeight: 800 }}>240ms</div>
+             <div style={{ fontSize: '0.8rem', color: 'var(--success)' }}>12ms queue</div>
+          </div>
           <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-            Sub-agent response time
+            Avg. end-to-end latency
           </div>
         </div>
 
