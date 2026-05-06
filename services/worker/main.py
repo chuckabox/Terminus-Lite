@@ -44,6 +44,7 @@ async def process_task(task_id: str):
             redis_client.set(f"task:{task.id}", task.model_dump_json())
             
             decision = await primary_agent.decide_next_step(task.request, history, current_summary)
+            logger.info(f"Agent decision: {decision}", extra={"service": "worker", "request_id": task.id})
             
             if "TASK_COMPLETE" in decision:
                 task.final_result = decision.replace("TASK_COMPLETE:", "").strip()

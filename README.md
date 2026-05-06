@@ -1,44 +1,61 @@
-# Terminus-Lite
+# Terminus-Lite: The Context-Saving Agent Router
 
-Terminus-Lite is a distributed sub-agent router designed to solve context-window bloat in agentic workflows. It offloads verbose terminal logs to localized Small Language Models (SLMs), passing only concise signals back to the primary orchestrator.
+**Terminus-Lite** is a distributed sub-agent system designed to prevent "context-window bloat" in AI agent workflows. It allows high-level agents to execute complex terminal tasks without ever seeing a single line of raw log output.
 
-## Quick Start
+---
 
-The stack runs on Docker or natively via PowerShell.
+## 🚀 The Problem: "Log Bloat"
+When an AI agent runs a command like `npm install` or `grep -r "error" .`, the terminal might return thousands of lines of output. 
+- **The Cost:** These logs consume the agent's limited context window (RAM).
+- **The Result:** The agent "forgets" the original goal or becomes expensive and slow.
 
-**Option 1: Docker (Recommended)**
-```bash
-docker compose up --build
+## ✨ The Solution: Log Distillation
+Terminus-Lite uses a **Split-Brain Architecture**:
+1. **The Primary Agent (Llama 3)**: The "Manager." It decides what to do (e.g., "Fix the bug in main.py").
+2. **The SLM Service (Qwen 2.5)**: The "Filter." It reads the raw terminal logs and summarizes them into 1-2 sentences (e.g., "The test failed on line 42 due to a NullPointer").
+3. **The Worker**: The "Hands." It executes the actual commands on the system.
+
+**The Result:** The Primary Agent only sees high-level signals, allowing it to solve massive tasks using 90% fewer tokens.
+
+---
+
+## 🛠️ Getting Started
+
+### 1. Launch the Stack
+The entire environment is self-contained via Docker.
+```powershell
+docker compose up --build -d
 ```
 
-**Option 2: Native (Python)**
-Requires a local Redis instance on port 6379.
-```bash
-python run.py
-```
+### 2. Access the Dashboard
+Open your browser to:
+👉 **[http://localhost:5173](http://localhost:5173)**
 
-Access the dashboard at `http://localhost:5173`.
+### 3. Running Your First Task
+From the dashboard, send a task like:
+- `Find all python files in the current directory.`
+- `Tell me what version of python is installed.`
+- `Check the contents of the backend folder.`
 
-## Architecture
+---
 
-Terminus-Lite uses a distributed worker model to isolate high-latency execution and inference tasks from the API gateway.
+## 🏗️ Architecture
+- **Orchestrator (FastAPI)**: Manages the API and task queue.
+- **Worker Cluster**: Executes terminal commands and manages the agent loop.
+- **SLM Service**: Dedicated inference endpoint for log summarization.
+- **Redis**: Handles state management and task routing.
+- **Ollama (Internal)**: Hosts the local AI models (`llama3:8b` for logic, `qwen2.5:3b` for summaries).
 
-- **Orchestrator**: A FastAPI gateway managing task lifecycles and Redis state.
-- **Worker Cluster**: Stateless nodes processing agent logic and terminal execution.
-- **SLM Service**: A dedicated inference endpoint for log summarization (Ollama/Qwen).
-- **Redis Queue**: The backbone for task routing and horizontal worker scaling.
+---
 
-## Reliability & Resiliency
-
-The system is built for production durability:
-- **Resilient Inference**: SLM failures trigger exponential backoff before falling back to smart truncation.
-- **Stateless Workers**: All task state is persisted in Redis; workers can be horizontally scaled or replaced without data loss.
-- **Context Isolation**: By distilling massive terminal outputs into structured summaries, the primary agent maintains a clean, high-performance context window.
-
-## Performance & Benchmarking
-
-Measure throughput and token efficiency locally:
+## 📈 Performance Benchmarking
+Measure how many tokens you're saving:
 ```powershell
 python scripts/benchmark.py
 ```
-The suite provides end-to-end latency metrics, throughput analysis, and estimated cost savings achieved through SLM offloading.
+This script runs a series of complex tasks and calculates the "Distillation Ratio" (Raw Logs vs. Summarized Context).
+
+---
+
+## 🔒 Security Note
+This application executes commands directly on the host (within the Docker environment). Use caution when giving it tasks that could delete or modify important files.

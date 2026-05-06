@@ -41,7 +41,9 @@ RULES:
 5. NO conversation. NO explanations.
 
 Current Situation:
-- If the user said 'hi' and you already ran 'echo', you are DONE.
+- If the task is a simple greeting like 'hi' or 'hello', DO NOT run any commands. Just finish immediately.
+- If you have already performed an action that satisfies the request, STOP.
+- NEVER run the same command twice.
 """),
             ("user", "TASK: {task}\n\nPREVIOUS_ACTIONS: {history}\n\nLATEST_EXECUTION_SUMMARY: {summary}")
         ])
