@@ -43,7 +43,9 @@ RULES:
 Current Situation:
 - If the task is a simple greeting like 'hi' or 'hello', DO NOT run any commands. Just finish immediately.
 - If you have already performed an action that satisfies the request, STOP.
-- NEVER run the same command twice.
+- NEVER run the same command twice. Even if you think it failed, try a DIFFERENT command or explain the failure and STOP.
+- Prefer efficient commands (e.g., 'ls -R' for listing files) over complex ones.
+- If the PREVIOUS_ACTIONS shows you already ran a command that provides the answer, DO NOT RUN IT AGAIN.
 """),
             ("user", "TASK: {task}\n\nPREVIOUS_ACTIONS: {history}\n\nLATEST_EXECUTION_SUMMARY: {summary}")
         ])

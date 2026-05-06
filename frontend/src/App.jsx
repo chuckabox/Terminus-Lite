@@ -162,26 +162,22 @@ function App() {
 
         <div className="summary-sidebar">
           <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-            Context_Analysis_Modules
+            Activity Stream
           </div>
           
           {results?.final_result && (
             <div className="summary-block" style={{ border: '1px solid var(--phosphor-green)', background: 'rgba(0,255,65,0.05)' }}>
-              <div style={{ fontSize: '0.6rem', color: 'var(--phosphor-green)', fontWeight: 800, marginBottom: '0.5rem' }}>
-                RESOLUTION_FINAL
+              <div style={{ fontSize: '0.6rem', color: 'var(--phosphor-green)', fontWeight: 800, marginBottom: '0.5rem', textTransform: 'uppercase' }}>
+                Resolution
               </div>
-              <div style={{ fontSize: '0.9rem', color: 'var(--text-bright)' }}>{results.final_result}</div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-bright)', fontWeight: 600 }}>{results.final_result}</div>
             </div>
           )}
 
           {results?.steps.map((step, i) => (
-            <div key={i} className="summary-block" style={{ borderLeft: '2px solid var(--data-blue)' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                <span style={{ fontSize: '0.6rem', fontWeight: 800, color: 'var(--data-blue)' }}>MODULE_0{i+1}</span>
-                <span style={{ fontSize: '0.6rem', color: 'var(--phosphor-green)' }}>-{step.tokens_saved}B</span>
-              </div>
-              <div style={{ fontWeight: 600, fontSize: '0.8rem', marginBottom: '0.25rem', color: 'var(--text-bright)' }}>{step.command}</div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-mid)' }}>{step.summary}</div>
+            <div key={i} className="summary-block">
+              <div style={{ fontWeight: 600, fontSize: '0.75rem', marginBottom: '0.25rem', color: 'var(--data-blue)' }}>{step.command}</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-mid)', lineHeight: 1.5 }}>{step.summary}</div>
             </div>
           ))}
           
