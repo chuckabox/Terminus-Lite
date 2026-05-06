@@ -30,6 +30,7 @@ redis_client = redis.Redis(
 )
 
 @app.post("/task/run", response_model=TaskResponse)
+    """Creates a new task and enqueues it for processing."""
 async def run_task(request: TaskRequest):
     if not request.task.strip():
         raise HTTPException(status_code=400, detail="Task description cannot be empty")
