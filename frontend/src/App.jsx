@@ -206,6 +206,51 @@ function App() {
       </section>
 
       <div className="main-layout">
+        <div className="summary-sidebar">
+          <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+            Activity Stream
+          </div>
+
+          {isDemo && (
+            <div className="mock-explorer">
+              <div className="explorer-header">
+                <span className="explorer-title">TARGET: /mock_target</span>
+                <a href="https://github.com/chuckabox/Terminus-Lite/tree/main/mock_target" target="_blank" rel="noreferrer" className="github-link">GITHUB</a>
+              </div>
+              <div className="file-tree">
+                <div>├── config/</div>
+                <div>│   └── settings.yaml <span className="tree-meta">(TODO)</span></div>
+                <div>├── src/</div>
+                <div>│   └── auth.py <span className="tree-meta">(TODO)</span></div>
+                <div>├── tests/</div>
+                <div>└── CONTEXT_SAVER.md</div>
+              </div>
+            </div>
+          )}
+          
+          {results?.final_result && (
+            <div className="summary-block" style={{ border: '1px solid var(--phosphor-green)', background: 'rgba(0,255,65,0.05)' }}>
+              <div style={{ fontSize: '0.6rem', color: 'var(--phosphor-green)', fontWeight: 800, marginBottom: '0.5rem', textTransform: 'uppercase' }}>
+                Resolution
+              </div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-bright)', fontWeight: 600 }}>{results.final_result}</div>
+            </div>
+          )}
+
+          {results?.steps.map((step, i) => (
+            <div key={i} className="summary-block">
+              <div style={{ fontWeight: 600, fontSize: '0.75rem', marginBottom: '0.25rem', color: 'var(--data-blue)' }}>{step.command}</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-mid)', lineHeight: 1.5 }}>{step.summary}</div>
+            </div>
+          ))}
+          
+          {!results && (
+            <div style={{ padding: '2rem', textAlign: 'center', border: '1px dashed var(--border-dim)', color: 'var(--text-dim)', fontSize: '0.7rem' }}>
+              WAITING_FOR_DATA_STREAM...
+            </div>
+          )}
+        </div>
+
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div className="command-input-row">
             <input 
@@ -255,51 +300,6 @@ function App() {
               {logs.length === 0 && <div style={{ color: 'var(--text-dim)' }}>STDOUT_READY_FOR_INGESTION...</div>}
             </div>
           </div>
-        </div>
-
-        <div className="summary-sidebar">
-          <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
-            Activity Stream
-          </div>
-
-          {isDemo && (
-            <div className="mock-explorer">
-              <div className="explorer-header">
-                <span className="explorer-title">TARGET: /mock_target</span>
-                <a href="https://github.com/chuckabox/Terminus-Lite/tree/main/mock_target" target="_blank" rel="noreferrer" className="github-link">GITHUB</a>
-              </div>
-              <div className="file-tree">
-                <div>├── config/</div>
-                <div>│   └── settings.yaml <span className="tree-meta">(TODO)</span></div>
-                <div>├── src/</div>
-                <div>│   └── auth.py <span className="tree-meta">(TODO)</span></div>
-                <div>├── tests/</div>
-                <div>└── CONTEXT_SAVER.md</div>
-              </div>
-            </div>
-          )}
-          
-          {results?.final_result && (
-            <div className="summary-block" style={{ border: '1px solid var(--phosphor-green)', background: 'rgba(0,255,65,0.05)' }}>
-              <div style={{ fontSize: '0.6rem', color: 'var(--phosphor-green)', fontWeight: 800, marginBottom: '0.5rem', textTransform: 'uppercase' }}>
-                Resolution
-              </div>
-              <div style={{ fontSize: '0.85rem', color: 'var(--text-bright)', fontWeight: 600 }}>{results.final_result}</div>
-            </div>
-          )}
-
-          {results?.steps.map((step, i) => (
-            <div key={i} className="summary-block">
-              <div style={{ fontWeight: 600, fontSize: '0.75rem', marginBottom: '0.25rem', color: 'var(--data-blue)' }}>{step.command}</div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-mid)', lineHeight: 1.5 }}>{step.summary}</div>
-            </div>
-          ))}
-          
-          {!results && (
-            <div style={{ padding: '2rem', textAlign: 'center', border: '1px dashed var(--border-dim)', color: 'var(--text-dim)', fontSize: '0.7rem' }}>
-              WAITING_FOR_DATA_STREAM...
-            </div>
-          )}
         </div>
       </div>
       {isDemo && (
