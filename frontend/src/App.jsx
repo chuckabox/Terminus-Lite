@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Terminal, Cpu, Zap, Activity, Save, ChevronRight, Layers } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Zap } from 'lucide-react';
 import './App.css';
 
 function App() {
@@ -14,26 +13,22 @@ function App() {
     let lastStepCount = 0;
     const interval = setInterval(async () => {
       try {
-        const response = await fetch(`http://localhost:8001/task/${taskId}`);
+        const response = await fetch(`http://127.0.0.1:8001/task/${taskId}`);
         const data = await response.json();
         setResults(data);
         
-        // Log new steps as they appear
         if (data.steps.length > lastStepCount) {
           const newStep = data.steps[data.steps.length - 1];
-          setLogs(prev => [...prev, 
-            `> [Step ${data.steps.length}] Executing: ${newStep.command}`,
-            `> [SLM] Summarized ${newStep.raw_log_size} bytes -> ${newStep.summary_size} bytes`
-          ]);
+          addLog(`[EXEC] ${newStep.command}`, 'system');
+          addLog(`[SLM] Distilled ${newStep.raw_log_size}B -> ${newStep.summary_size}B`);
           lastStepCount = data.steps.length;
         }
 
         if (data.status === 'completed' || data.status === 'failed') {
           clearInterval(interval);
           setLoading(false);
-          const statusLabel = data.status.toUpperCase();
-          const errorDetail = data.error ? `: ${data.error}` : '';
-          setLogs(prev => [...prev, `> Task ${statusLabel}${errorDetail}.`]);
+          addLog(`[STATUS] TASK ${data.status.toUpperCase()}`, data.status === 'failed' ? 'error' : 'system');
+          if (data.error) addLog(`[ERROR] ${data.error}`, 'error');
         }
       } catch (error) {
         console.error("Polling error:", error);
@@ -41,36 +36,33 @@ function App() {
     }, 1000);
   };
 
+  const addLog = (msg, type = '') => {
+    const time = new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    setLogs(prev => [...prev, { time, msg, type }]);
+  };
+
   const handleExecute = async () => {
     if (!task) return;
     setLoading(true);
     setResults(null);
-    setLogs([
-      `> Initiating task: ${task}`,
-      `> Handshaking with Orchestrator (Port 8001)...`,
-    ]);
+    setLogs([]);
+    addLog(`INITIATING: ${task}`, 'system');
+    addLog(`AUTH_HANDSHAKE: ORCHESTRATOR_8001...`);
     
     try {
-      const response = await fetch('http://localhost:8001/task/run', {
+      const response = await fetch('http://127.0.0.1:8001/task/run', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ task }),
       });
       const { task_id } = await response.json();
       
-      setLogs(prev => [
-        ...prev, 
-        `> Task accepted and persisted in Redis.`,
-        `> Worker Cluster notified (task_id: ${task_id.substring(0,8)}).`,
-        `> Spawning Primary Agent (llama3:8b)...`,
-        `> Note: Initial model load may take 30-60s.`
-      ]);
-
-      // Start polling
-      pollTask(task_id);
+      addLog(`QUEUE_ACCEPT: TASK_ID_${task_id.substring(0,8)}`);
+      addLog(`SPAWNING_PRIMARY: LLAMA3_8B...`, 'system');
       
+      pollTask(task_id);
     } catch (error) {
-      setLogs(prev => [...prev, `! Error connecting to Terminus-Lite Backend: ${error.message}`]);
+      addLog(`CONNECTION_FAILED: ${error.message}`, 'error');
       setLoading(false);
     }
   };
@@ -84,137 +76,102 @@ function App() {
   return (
     <div className="app-container">
       <header>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <Zap size={24} color="var(--accent-primary)" fill="var(--accent-primary)" style={{ filter: 'drop-shadow(0 0 8px var(--accent-primary))' }} />
-          <div className="logo">TERMINUS-LITE</div>
+        <div className="logo">
+          <Zap size={18} fill="currentColor" />
+          TERMINUS-LITE // DISTRIBUTED_ROUTER
         </div>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-          <div className="badge badge-slm">SLM Active</div>
-          <div className="badge badge-primary">Primary Linked</div>
+        <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.7rem', fontWeight: 600 }}>
+          <span style={{ color: 'var(--phosphor-green)' }}>[ SLM_LINK: ACTIVE ]</span>
+          <span style={{ color: 'var(--data-blue)' }}>[ PRIMARY_LINK: ONLINE ]</span>
         </div>
       </header>
 
-      <aside className="sidebar">
-        <div className="stats-card">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-primary)', marginBottom: '0.5rem' }}>
-            <Save size={18} />
-            <span style={{ fontWeight: 600 }}>Token Savings</span>
-          </div>
-          <div style={{ fontSize: '2rem', fontWeight: 800 }}>
-            {results ? results.total_tokens_saved.toLocaleString() : '0'}
-          </div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-            Context preserved by SLM offloading
+      <section className="hud-metrics">
+        <div className="metric-item">
+          <div className="metric-label">Token Delta</div>
+          <div className="metric-value" style={{ color: 'var(--phosphor-green)' }}>
+            -{results ? results.total_tokens_saved.toLocaleString() : '0'}
           </div>
         </div>
-
-        <div className="stats-card">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--accent-secondary)', marginBottom: '0.5rem' }}>
-            <Activity size={18} />
-            <span style={{ fontWeight: 600 }}>Performance</span>
-          </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
-             <div style={{ fontSize: '2rem', fontWeight: 800 }}>240ms</div>
-             <div style={{ fontSize: '0.8rem', color: 'var(--success)' }}>12ms queue</div>
-          </div>
-          <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
-            Avg. end-to-end latency
-          </div>
+        <div className="metric-item">
+          <div className="metric-label">Avg Latency</div>
+          <div className="metric-value">242ms</div>
         </div>
-
-        <div style={{ marginTop: 'auto' }}>
-          <div style={{ color: 'var(--text-secondary)', fontSize: '0.75rem', marginBottom: '1rem' }}>SYSTEM STATUS</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
-              <span>vLLM Endpoint</span>
-              <span style={{ color: 'var(--success)' }}>ONLINE</span>
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem' }}>
-              <span>Primary Model</span>
-              <span style={{ color: 'var(--success)' }}>GPT-4O</span>
-            </div>
-          </div>
+        <div className="metric-item">
+          <div className="metric-label">Queue Time</div>
+          <div className="metric-value">12ms</div>
         </div>
-      </aside>
+        <div className="metric-item">
+          <div className="metric-label">System Load</div>
+          <div className="metric-value" style={{ color: 'var(--data-blue)' }}>0.14</div>
+        </div>
+      </section>
 
-      <main className="main-content">
-        <section style={{ display: 'flex', gap: '1rem' }}>
-          <input 
-            type="text" 
-            placeholder="Describe the terminal task (e.g., 'Run tests and fix build errors')" 
-            className="stats-card"
-            style={{ flex: 1, background: 'transparent', outline: 'none', color: 'white' }}
-            value={task}
-            onChange={(e) => setTask(e.target.value)}
-          />
-          <button className="btn-primary" onClick={handleExecute} disabled={loading}>
-            {loading ? 'Executing...' : 'Run Task'}
-          </button>
-        </section>
+      <div className="main-layout">
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <div className="command-input-row">
+            <input 
+              type="text" 
+              placeholder="ENTER_COMMAND_DESCRIPTION..." 
+              className="terminal-input"
+              value={task}
+              onChange={(e) => setTask(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleExecute()}
+            />
+            <button className="run-btn" onClick={handleExecute} disabled={loading}>
+              {loading ? 'BUSY' : 'EXEC'}
+            </button>
+          </div>
 
-        {results?.final_result && (
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="summary-card" 
-            style={{ borderLeft: '4px solid var(--success)' }}
-          >
-            <div style={{ fontWeight: 800, fontSize: '0.75rem', color: 'var(--success)', marginBottom: '0.5rem' }}>FINAL TASK RESOLUTION</div>
-            <div style={{ fontSize: '1.1rem', fontWeight: 600 }}>{results.final_result}</div>
-          </motion.div>
-        )}
-
-        <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <Terminal size={20} color="var(--accent-primary)" />
-                <h3 style={{ margin: 0 }}>Execution Logs</h3>
-              </div>
-              <button 
-                onClick={() => setLogs([])}
-                style={{ background: 'transparent', border: '1px solid var(--border-color)', color: 'var(--text-secondary)', fontSize: '0.7rem', padding: '0.2rem 0.5rem', borderRadius: '4px', cursor: 'pointer' }}
-              >
-                CLEAR
-              </button>
+          <div className="terminal-deck">
+            <div className="terminal-header">
+              <span>TERMINAL_OUTPUT</span>
+              <span>BUFFER_SIZE: {logs.length} LINES</span>
             </div>
-            <div className="terminal" ref={terminalRef}>
+            <div className="terminal-content" ref={terminalRef}>
               {logs.map((log, i) => (
-                <div key={i} className={`terminal-line ${log.startsWith('>') ? 'command' : log.startsWith('!') ? 'error' : ''}`}>
-                  {log}
+                <div key={i} className="log-entry">
+                  <span className="log-time">[{log.time}]</span>
+                  <span className={`log-msg ${log.type}`}>{log.msg}</span>
                 </div>
               ))}
+              {logs.length === 0 && <div style={{ color: 'var(--text-dim)' }}>STDOUT_READY_FOR_INGESTION...</div>}
             </div>
           </div>
+        </div>
 
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-              <Layers size={20} color="var(--accent-secondary)" />
-              <h3 style={{ margin: 0 }}>SLM Context Summaries</h3>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-              <AnimatePresence>
-                {results?.steps.map((step, i) => (
-                  <motion.div 
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    key={i} 
-                    className="summary-card"
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
-                      <span style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--accent-secondary)' }}>STEP {i+1}</span>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--success)' }}>-{step.tokens_saved} tokens</span>
-                    </div>
-                    <div style={{ fontWeight: 600, fontSize: '0.9rem', marginBottom: '0.5rem' }}>{step.command}</div>
-                    <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>{step.summary}</div>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-              {!results && <div style={{ color: 'var(--text-secondary)', fontStyle: 'italic' }}>No summaries yet...</div>}
-            </div>
+        <div className="summary-sidebar">
+          <div style={{ fontSize: '0.7rem', color: 'var(--text-dim)', textTransform: 'uppercase', marginBottom: '0.5rem' }}>
+            Context_Analysis_Modules
           </div>
-        </section>
-      </main>
+          
+          {results?.final_result && (
+            <div className="summary-block" style={{ border: '1px solid var(--phosphor-green)', background: 'rgba(0,255,65,0.05)' }}>
+              <div style={{ fontSize: '0.6rem', color: 'var(--phosphor-green)', fontWeight: 800, marginBottom: '0.5rem' }}>
+                RESOLUTION_FINAL
+              </div>
+              <div style={{ fontSize: '0.9rem', color: 'var(--text-bright)' }}>{results.final_result}</div>
+            </div>
+          )}
+
+          {results?.steps.map((step, i) => (
+            <div key={i} className="summary-block" style={{ borderLeft: '2px solid var(--data-blue)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem' }}>
+                <span style={{ fontSize: '0.6rem', fontWeight: 800, color: 'var(--data-blue)' }}>MODULE_0{i+1}</span>
+                <span style={{ fontSize: '0.6rem', color: 'var(--phosphor-green)' }}>-{step.tokens_saved}B</span>
+              </div>
+              <div style={{ fontWeight: 600, fontSize: '0.8rem', marginBottom: '0.25rem', color: 'var(--text-bright)' }}>{step.command}</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-mid)' }}>{step.summary}</div>
+            </div>
+          ))}
+          
+          {!results && (
+            <div style={{ padding: '2rem', textAlign: 'center', border: '1px dashed var(--border-dim)', color: 'var(--text-dim)', fontSize: '0.7rem' }}>
+              WAITING_FOR_DATA_STREAM...
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
