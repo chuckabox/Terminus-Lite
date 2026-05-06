@@ -66,12 +66,17 @@ async def get_task(task_id: str):
 
 @app.get("/metrics")
 async def get_metrics():
-    # Basic metrics from Redis
-    queue_length = redis_client.llen("task_queue")
-    # In a real system, we'd pull p95 etc from Prometheus
+    import psutil
+    # Get 1-minute load average if on Linux/Mac, or CPU percent on Windows
+    try:
+        load_avg = os.getloadavg()[0] if hasattr(os, "getloadavg") else psutil.cpu_percent() / 100
+    except:
+        load_avg = 0.0
+        
     return {
-        "queue_length": queue_length,
-        "active_workers": 1, # Placeholder
+        "queue_length": redis_client.llen("task_queue"),
+        "system_load": round(load_avg, 2),
+        "memory_usage": psutil.virtual_memory().percent,
         "service_status": "healthy"
     }
 

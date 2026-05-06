@@ -19,7 +19,7 @@ ollama_url = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
 llm = ChatOllama(model=model_name, base_url=ollama_url, temperature=0)
 
 summary_prompt = ChatPromptTemplate.from_messages([
-    ("system", "Summarize these terminal logs into a single, clean sentence. Do not use prefixes like 'Key Results' or 'Errors'. Just state what happened."),
+    ("system", "Summarize these logs into a single sentence. Mention key data points (like filenames or counts) if they exist. Be direct and avoid AI-meta commentary like 'The logs show'."),
     ("user", "STDOUT:\n{stdout}\n\nSTDERR:\n{stderr}")
 ])
 

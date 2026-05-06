@@ -7,6 +7,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState(null);
   const [logs, setLogs] = useState([]);
+  const [metrics, setMetrics] = useState({ system_load: 0, queue_length: 0 });
   const terminalRef = useRef(null);
 
   const pollTask = async (taskId) => {
@@ -35,6 +36,22 @@ function App() {
       }
     }, 1000);
   };
+
+  const fetchMetrics = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8001/metrics');
+      const data = await response.json();
+      setMetrics(data);
+    } catch (e) {
+      console.error("Metric fetch failed", e);
+    }
+  };
+
+  useEffect(() => {
+    fetchMetrics();
+    const interval = setInterval(fetchMetrics, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
   const addLog = (msg, type = '') => {
     const time = new Date().toLocaleTimeString([], { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -123,7 +140,9 @@ function App() {
         </div>
         <div className="metric-item">
           <div className="metric-label">System Load</div>
-          <div className="metric-value" style={{ color: 'var(--data-blue)' }}>0.14</div>
+          <div className="metric-value" style={{ color: 'var(--data-blue)' }}>
+            {metrics.system_load.toFixed(2)}
+          </div>
         </div>
       </section>
 
