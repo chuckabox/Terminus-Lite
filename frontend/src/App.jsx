@@ -44,7 +44,11 @@ function App() {
   const handleExecute = async () => {
     if (!task) return;
     setLoading(true);
-    setLogs([`> Initiating task: ${task}`, `> Spawning Primary Agent (Frontier LLM)...`]);
+    setResults(null);
+    setLogs([
+      `> Initiating task: ${task}`,
+      `> Handshaking with Orchestrator (Port 8001)...`,
+    ]);
     
     try {
       const response = await fetch('http://localhost:8001/task/run', {
@@ -54,6 +58,14 @@ function App() {
       });
       const { task_id } = await response.json();
       
+      setLogs(prev => [
+        ...prev, 
+        `> Task accepted and persisted in Redis.`,
+        `> Worker Cluster notified (task_id: ${task_id.substring(0,8)}).`,
+        `> Spawning Primary Agent (llama3:8b)...`,
+        `> Note: Initial model load may take 30-60s.`
+      ]);
+
       // Start polling
       pollTask(task_id);
       
