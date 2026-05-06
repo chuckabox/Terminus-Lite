@@ -135,9 +135,17 @@ function App() {
 
         <section style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
           <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
-              <Terminal size={20} color="var(--accent-primary)" />
-              <h3 style={{ margin: 0 }}>Execution Logs</h3>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '1rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Terminal size={20} color="var(--accent-primary)" />
+                <h3 style={{ margin: 0 }}>Execution Logs</h3>
+              </div>
+              <button 
+                onClick={() => setLogs([])}
+                style={{ background: 'transparent', border: '1px solid var(--border-color)', color: 'var(--text-secondary)', fontSize: '0.7rem', padding: '0.2rem 0.5rem', borderRadius: '4px', cursor: 'pointer' }}
+              >
+                CLEAR
+              </button>
             </div>
             <div className="terminal" ref={terminalRef}>
               {logs.map((log, i) => (
