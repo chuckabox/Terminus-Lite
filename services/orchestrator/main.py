@@ -52,6 +52,7 @@ async def run_task(request: TaskRequest):
 
 @app.get("/health")
 async def health_check():
+    """Returns the health status of the orchestrator and Redis."""
     try:
         redis_client.ping()
         return {"status": "healthy", "redis": "connected"}
