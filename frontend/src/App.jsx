@@ -77,7 +77,12 @@ function App() {
     <div className="app-container">
       <header>
         <div className="logo">
-          <Zap size={18} fill="currentColor" />
+          <svg width="20" height="20" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: 'drop-shadow(0 0 4px var(--phosphor-green))' }}>
+            <path d="M20 20h60v10H55v50H45V30H20z" fill="var(--phosphor-green)"/>
+            <rect x="45" y="75" width="10" height="5" fill="var(--phosphor-green)">
+              <animate attributeName="opacity" values="1;0;1" dur="1s" repeatCount="indefinite" />
+            </rect>
+          </svg>
           TERMINUS-LITE // DISTRIBUTED_ROUTER
         </div>
         <div style={{ display: 'flex', gap: '1.5rem', fontSize: '0.7rem', fontWeight: 600 }}>
