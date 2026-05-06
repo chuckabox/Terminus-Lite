@@ -43,6 +43,14 @@ async def run_task(request: TaskRequest):
     
     return TaskResponse(task_id=task.id, status=task.status)
 
+@app.get("/health")
+async def health_check():
+    try:
+        redis_client.ping()
+        return {"status": "healthy", "redis": "connected"}
+    except Exception as e:
+        return {"status": "unhealthy", "redis": str(e)}
+
 @app.get("/task/{task_id}", response_model=Task)
 async def get_task(task_id: str):
     task_data = redis_client.get(f"task:{task_id}")
