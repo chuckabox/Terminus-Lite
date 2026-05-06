@@ -6,7 +6,17 @@ Terminus-Lite is a distributed sub-agent router designed to solve **context-wind
 
 **[View the Live Demo on GitHub Pages](https://chuckabox.github.io/Terminus-Lite/)**
 
-*Note: The live demo runs in **Static Mode** (simulated agents) because GitHub Pages does not support the backend services (Redis/Ollama). To use the full system with real AI agents, follow the local setup below.*
+### Static Demo vs. Local Installation
+
+Because GitHub Pages hosts only static files, the live website runs in **Simulation Mode**. Here is how it differs from the full local version:
+
+| Feature | **Live Website (Demo)** | **Local Setup (Full)** |
+| :--- | :--- | :--- |
+| **AI Inference** | Simulated (Pre-scripted) | **Real** (Llama 3 & Qwen 2.5 via Ollama) |
+| **Command Execution** | None (Mocked) | **Real** (Executes in Docker Worker) |
+| **Data Source** | `mock_target/` folder | **Your actual filesystem** (via Volume Mount) |
+| **Backend** | Browser-only | **Full Stack** (FastAPI, Redis, Docker) |
+| **Purpose** | Visual UI/UX demonstration | Production-grade log distillation |
 
 ## Why use this?
 
