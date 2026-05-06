@@ -1,61 +1,46 @@
-# Terminus-Lite: The Context-Saving Agent Router
+# Terminus-Lite
 
-**Terminus-Lite** is a distributed sub-agent system designed to prevent "context-window bloat" in AI agent workflows. It allows high-level agents to execute complex terminal tasks without ever seeing a single line of raw log output.
+Terminus-Lite is a distributed sub-agent router that prevents context-window bloat in AI workflows. It offloads verbose terminal logs to localized Small Language Models (SLMs), passing only concise signals back to the primary orchestrator.
 
----
+## Core Concept: Log Distillation
 
-## 🚀 The Problem: "Log Bloat"
-When an AI agent runs a command like `npm install` or `grep -r "error" .`, the terminal might return thousands of lines of output. 
-- **The Cost:** These logs consume the agent's limited context window (RAM).
-- **The Result:** The agent "forgets" the original goal or becomes expensive and slow.
+AI agents often lose context when overwhelmed by thousands of lines of terminal output. Terminus-Lite solves this using a split-brain architecture:
 
-## ✨ The Solution: Log Distillation
-Terminus-Lite uses a **Split-Brain Architecture**:
-1. **The Primary Agent (Llama 3)**: The "Manager." It decides what to do (e.g., "Fix the bug in main.py").
-2. **The SLM Service (Qwen 2.5)**: The "Filter." It reads the raw terminal logs and summarizes them into 1-2 sentences (e.g., "The test failed on line 42 due to a NullPointer").
-3. **The Worker**: The "Hands." It executes the actual commands on the system.
+1. **Primary Agent (Llama 3)**: Manages high-level reasoning and task logic.
+2. **SLM Service (Qwen 2.5)**: Distills raw logs into 1-2 sentence summaries.
+3. **Worker**: Executes system commands and manages the local agent loop.
 
-**The Result:** The Primary Agent only sees high-level signals, allowing it to solve massive tasks using 90% fewer tokens.
+By distilling logs, the Primary Agent maintains a clean context window, reducing token usage by up to 90%.
 
----
+## Getting Started
 
-## 🛠️ Getting Started
+The entire stack is self-contained via Docker.
 
-### 1. Launch the Stack
-The entire environment is self-contained via Docker.
-```powershell
-docker compose up --build -d
+```bash
+docker compose up -d
 ```
 
-### 2. Access the Dashboard
-Open your browser to:
-👉 **[http://localhost:5173](http://localhost:5173)**
+### Usage
+1. Open the dashboard at [http://localhost:5173](http://localhost:5173).
+2. Input a terminal-heavy task (e.g., "Find all python files in the project").
+3. Monitor the distillation process as raw output is converted into structured summaries.
 
-### 3. Running Your First Task
-From the dashboard, send a task like:
-- `Find all python files in the current directory.`
-- `Tell me what version of python is installed.`
-- `Check the contents of the backend folder.`
+## Architecture
 
----
-
-## 🏗️ Architecture
-- **Orchestrator (FastAPI)**: Manages the API and task queue.
-- **Worker Cluster**: Executes terminal commands and manages the agent loop.
+- **Orchestrator**: FastAPI gateway managing the task lifecycle and Redis state.
+- **Worker Cluster**: Stateless nodes processing agent logic and execution.
 - **SLM Service**: Dedicated inference endpoint for log summarization.
-- **Redis**: Handles state management and task routing.
-- **Ollama (Internal)**: Hosts the local AI models (`llama3:8b` for logic, `qwen2.5:3b` for summaries).
+- **Redis Queue**: Backbone for task routing and horizontal scaling.
+- **Ollama**: Local inference engine for internal model orchestration.
 
----
+## Benchmarking
 
-## 📈 Performance Benchmarking
-Measure how many tokens you're saving:
-```powershell
+Measure throughput and token efficiency:
+
+```bash
 python scripts/benchmark.py
 ```
-This script runs a series of complex tasks and calculates the "Distillation Ratio" (Raw Logs vs. Summarized Context).
 
----
+## Security
 
-## 🔒 Security Note
-This application executes commands directly on the host (within the Docker environment). Use caution when giving it tasks that could delete or modify important files.
+This system executes commands directly within the container environment. Use caution when running tasks that modify the filesystem.
