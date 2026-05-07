@@ -176,12 +176,7 @@ function App() {
             </div>
           </div>
         </div>
-        <div className="metric-item">
-          <div className="metric-label">Step Index</div>
-          <div className="metric-value">
-            {results ? results.steps.length : '0'}<span style={{ color: 'var(--text-dim)', fontSize: '0.8rem' }}>/03</span>
-          </div>
-        </div>
+
         <div className="metric-item">
           <div className="metric-label">Token Delta</div>
           <div className="metric-value" style={{ color: 'var(--phosphor-green)' }}>
