@@ -76,32 +76,7 @@ header {
   padding: 0 1rem;
 }
 
-.demo-banner {
-  background: var(--safety-orange);
-  color: var(--bg-black);
-  padding: 0.5rem 1rem;
-  font-size: 0.7rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  justify-content: center;
-  z-index: 10000;
-}
 
-.demo-tag {
-  background: var(--bg-black);
-  color: var(--safety-orange);
-  padding: 2px 6px;
-  border-radius: 2px;
-  font-size: 0.6rem;
-}
-
-.demo-link {
-  color: var(--bg-black);
-  text-decoration: underline;
-  margin-left: 0.5rem;
-}
 
 .logo {
   font-weight: 700;
@@ -193,7 +168,25 @@ header {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  overflow-y: overlay;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.summary-sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.summary-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.summary-sidebar::-webkit-scrollbar-thumb {
+  background: var(--md-sys-color-surface-variant);
+  border-radius: 4px;
+}
+
+.summary-sidebar::-webkit-scrollbar-thumb:hover {
+  background: var(--phosphor-green);
 }
 
 .summary-block {
@@ -418,38 +411,7 @@ header {
   }
 }
 
-.demo-banner {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: var(--safety-orange);
-  color: var(--bg-black);
-  padding: 0.5rem 1rem;
-  font-size: 0.7rem;
-  font-weight: 700;
-  z-index: 10000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  letter-spacing: 0.05em;
-}
 
-.demo-banner-content {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.demo-label {
-  border: 1px solid var(--bg-black);
-  padding: 2px 6px;
-  border-radius: 2px;
-}
-
-.demo-text {
-  opacity: 0.9;
-}
 
 .mock-explorer {
   background: var(--surface-low);

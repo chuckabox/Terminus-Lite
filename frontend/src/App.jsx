@@ -295,14 +295,6 @@ function App() {
           ))}
         </div>
       </footer>
-      {isDemo && (
-        <div className="demo-banner">
-          <div className="demo-banner-content">
-            <span className="demo-label">DEMO_MODE_ACTIVE</span>
-            <span className="demo-text">Static simulation running. Backend required for real-time routing.</span>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
